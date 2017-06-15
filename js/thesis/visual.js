@@ -1,4 +1,3 @@
-
 var margin = {top: 20, right: 20, bottom: 30, left: 40},
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
@@ -6,7 +5,7 @@ var margin = {top: 20, right: 20, bottom: 30, left: 40},
 var x = d3.scale.linear()
     .range([0, width]);
 
-var y = d3.scale.inear()
+var y = d3.scale.linear()
     .range([height, 0]);
 
 var color = d3.scale.category10();
@@ -25,7 +24,7 @@ var svg = d3.select("body").append("svg")
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-d3.tsv("ML_Datasets/data.tsv", function(error, data) {
+d3.tsv("./ML_Datasets/iris.tsv", function(error, data) {
   if (error) throw error;
 
   data.forEach(function(d) {
