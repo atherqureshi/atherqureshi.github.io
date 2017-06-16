@@ -53,7 +53,7 @@ p {
 }
 
 .bg-primary {
-    background-color: gray!important
+    background-color: #0a0e1c!important
 }
 
 .bg-dark {
@@ -62,11 +62,11 @@ p {
 }
 
 .text-faded {
-    color: black
+    color: white
 }
 
 section {
-    padding: 100px 0
+    padding: 80px
 }
 
 .section-heading {
@@ -104,7 +104,7 @@ body {
 }
 
 #mainNav {
-    background-color: #fff;
+    background-color: black;
     border-color: rgba(34, 34, 34, .05);
     font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
     -webkit-transition: all .2s;
@@ -113,7 +113,7 @@ body {
 }
 
 #mainNav .navbar-brand {
-    color: blue;
+    color: white;
     font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
     font-weight: 700;
     text-transform: uppercase
@@ -127,7 +127,7 @@ body {
 #mainNav .navbar-toggle {
     font-weight: 700;
     font-size: 12px;
-    color: #222;
+    color: white;
     text-transform: uppercase
 }
 
@@ -136,12 +136,12 @@ body {
     text-transform: uppercase;
     font-weight: 700;
     font-size: 13px;
-    color: #222
+    color: grey;
 }
 
 #mainNav .navbar-nav>li.nav-item>a.nav-link:focus:hover,
 #mainNav .navbar-nav>li.nav-item>a.nav-link:hover {
-    color: blue
+    color: white;
 }
 
 #mainNav .navbar-nav>li.nav-item>a.nav-link.active,
@@ -176,24 +176,25 @@ body {
         color: #fff
     }
     #mainNav.navbar-shrink {
-        background-color: #fff;
+        background-color: black;
+        opacity: 0.9;
         border-color: rgba(34, 34, 34, .05)
     }
     #mainNav.navbar-shrink .navbar-brand {
-        color: blue;
+        color: white;
         font-size: 16px
     }
     #mainNav.navbar-shrink .navbar-brand:focus,
     #mainNav.navbar-shrink .navbar-brand:hover {
-        color: blue
+        color: blue;
     }
     #mainNav.navbar-shrink .navbar-nav>li.nav-item>a.nav-link,
     #mainNav.navbar-shrink .navbar-nav>li.nav-item>a.nav-link:focus {
-        color: #222
+        color: white;
     }
     #mainNav.navbar-shrink .navbar-nav>li.nav-item>a.nav-link:focus:hover,
     #mainNav.navbar-shrink .navbar-nav>li.nav-item>a.nav-link:hover {
-        color: blue
+        color: blue;
     }
 }
 
@@ -208,7 +209,7 @@ header.masthead {
     background-position: center;
     background-image: url(../img/header.jpg);
     text-align: center;
-    color: #fff
+    color: #fff;
 }
 
 header.masthead .header-content {
@@ -441,7 +442,7 @@ fieldset[disabled] .btn-default:hover {
 
 .btn-primary:hover {
     color: #fff;
-    background-color: black;
+    background-color: blue;
     border-color: blue;
 }
 
@@ -449,7 +450,7 @@ fieldset[disabled] .btn-default:hover {
 .btn-primary:active,
 .open>.btn-primary.dropdown-toggle {
     color: #fff;
-    background-color: blue;
+    background-color: lightblue;
     border-color: black;
 }
 
@@ -500,5 +501,13 @@ fieldset[disabled] .btn-primary:hover {
 }
 
 .btn-xl {
-    padding: 9px 30px
+    padding: 9px 30px;
+    border-radius: 7px;
+}
+
+
+/* overriding boostrap class for navbar menu */
+
+.navbar-toggler-icon {
+    background-color: white !important;
 }
