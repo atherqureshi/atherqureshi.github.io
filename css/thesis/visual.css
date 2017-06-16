@@ -1,14 +1,14 @@
 body {
-  font: 10px sans-serif;
+    font: 8px arial;
 }
 
 .axis path,
 .axis line {
-  fill: none;
-  stroke: #000;
-  shape-rendering: crispEdges;
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
 }
 
 .dot {
-  stroke: #000;
+    stroke: #000;
 }

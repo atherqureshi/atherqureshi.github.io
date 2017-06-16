@@ -48,7 +48,8 @@ h6 {
 p {
     font-size: 16px;
     line-height: 1.5;
-    margin-bottom: 20px
+    margin-bottom: 20px;
+    font-family: arial;
 }
 
 .bg-primary {
@@ -427,29 +428,29 @@ fieldset[disabled] .btn-default:hover {
 
 .btn-primary {
     color: #fff;
-    background-color: blue;
-    border-color: #f05f40
+    background-color: black;
+    border-color: blue;
 }
 
 .btn-primary.focus,
 .btn-primary:focus {
     color: #fff;
-    background-color: blue;
-    border-color: black
+    background-color: black;
+    border-color: blue
 }
 
 .btn-primary:hover {
     color: #fff;
     background-color: black;
-    border-color: black
+    border-color: blue;
 }
 
 .btn-primary.active,
 .btn-primary:active,
 .open>.btn-primary.dropdown-toggle {
     color: #fff;
-    background-color: #eb3812;
-    border-color: #e13612
+    background-color: blue;
+    border-color: black;
 }
 
 .btn-primary.active.focus,
@@ -492,12 +493,12 @@ fieldset[disabled] .btn-primary:hover {
 
 .btn {
     font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
-    border: none;
+    border: blue;
     border-radius: 300px;
     font-weight: 700;
     text-transform: uppercase
 }
 
 .btn-xl {
-    padding: 10px 30px
+    padding: 9px 30px
 }
