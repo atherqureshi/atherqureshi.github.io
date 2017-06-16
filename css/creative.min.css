@@ -15,7 +15,7 @@ body {
 }
 
 hr {
-    border-color: #f05f40;
+    border-color: blue;
     border-width: 3px;
     max-width: 50px
 }
@@ -33,7 +33,7 @@ a {
 
 a:focus,
 a:hover {
-    color: #f05f40
+    color: blue
 }
 
 h1,
@@ -52,7 +52,7 @@ p {
 }
 
 .bg-primary {
-    background-color: #f05f40!important
+    background-color: gray!important
 }
 
 .bg-dark {
@@ -61,7 +61,7 @@ p {
 }
 
 .text-faded {
-    color: rgba(255, 255, 255, .7)
+    color: black
 }
 
 section {
@@ -112,7 +112,7 @@ body {
 }
 
 #mainNav .navbar-brand {
-    color: #f05f40;
+    color: blue;
     font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
     font-weight: 700;
     text-transform: uppercase
@@ -120,7 +120,7 @@ body {
 
 #mainNav .navbar-brand:focus,
 #mainNav .navbar-brand:hover {
-    color: #f05f40
+    color: blue
 }
 
 #mainNav .navbar-toggle {
@@ -140,12 +140,12 @@ body {
 
 #mainNav .navbar-nav>li.nav-item>a.nav-link:focus:hover,
 #mainNav .navbar-nav>li.nav-item>a.nav-link:hover {
-    color: #f05f40
+    color: blue
 }
 
 #mainNav .navbar-nav>li.nav-item>a.nav-link.active,
 #mainNav .navbar-nav>li.nav-item>a.nav-link:focus.active {
-    color: #f05f40!important;
+    color: blue!important;
     background-color: transparent
 }
 
@@ -179,12 +179,12 @@ body {
         border-color: rgba(34, 34, 34, .05)
     }
     #mainNav.navbar-shrink .navbar-brand {
-        color: #f05f40;
+        color: blue;
         font-size: 16px
     }
     #mainNav.navbar-shrink .navbar-brand:focus,
     #mainNav.navbar-shrink .navbar-brand:hover {
-        color: #f05f40
+        color: blue
     }
     #mainNav.navbar-shrink .navbar-nav>li.nav-item>a.nav-link,
     #mainNav.navbar-shrink .navbar-nav>li.nav-item>a.nav-link:focus {
@@ -192,7 +192,7 @@ body {
     }
     #mainNav.navbar-shrink .navbar-nav>li.nav-item>a.nav-link:focus:hover,
     #mainNav.navbar-shrink .navbar-nav>li.nav-item>a.nav-link:hover {
-        color: #f05f40
+        color: blue
     }
 }
 
@@ -352,7 +352,7 @@ header.masthead .header-content .header-content-inner p {
 }
 
 .text-primary {
-    color: #f05f40!important
+    color: blue!important
 }
 
 .no-gutter>[class*=col-] {
@@ -427,21 +427,21 @@ fieldset[disabled] .btn-default:hover {
 
 .btn-primary {
     color: #fff;
-    background-color: #f05f40;
+    background-color: blue;
     border-color: #f05f40
 }
 
 .btn-primary.focus,
 .btn-primary:focus {
     color: #fff;
-    background-color: #eb3812;
-    border-color: #a4270d
+    background-color: blue;
+    border-color: black
 }
 
 .btn-primary:hover {
     color: #fff;
-    background-color: #eb3812;
-    border-color: #e13612
+    background-color: black;
+    border-color: black
 }
 
 .btn-primary.active,
@@ -499,5 +499,5 @@ fieldset[disabled] .btn-primary:hover {
 }
 
 .btn-xl {
-    padding: 15px 30px
+    padding: 10px 30px
 }
