@@ -429,7 +429,7 @@ fieldset[disabled] .btn-default:hover {
 
 .btn-primary {
     color: #fff;
-    background-color: black;
+    background-color: #0066ff;
     border-color: blue;
 }
 
@@ -442,7 +442,7 @@ fieldset[disabled] .btn-default:hover {
 
 .btn-primary:hover {
     color: #fff;
-    background-color: blue;
+    background-color: black;
     border-color: blue;
 }
 
@@ -503,10 +503,13 @@ fieldset[disabled] .btn-primary:hover {
 .btn-xl {
     padding: 9px 30px;
     border-radius: 7px;
+    border: 2px solid blue
 }
 
 
-/* overriding boostrap class for navbar menu */
+/* overriding boostrap class for navbar menu
+since you could not see the icon to show list (it was black on black background)
+So I made it white! */
 
 .navbar-toggler-icon {
     background-color: white !important;
