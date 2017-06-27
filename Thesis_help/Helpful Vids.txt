@@ -1,0 +1,7 @@
+Helpful Videos
+
+3.4: Linear Regression with Gradient Descent - Intelligence and Learning
+https://www.youtube.com/watch?v=L-Lsfu4ab74&feature=youtu.be
+
+Machine Learning with D3
+https://www.youtube.com/watch?v=-0Pe30Zz3a0
