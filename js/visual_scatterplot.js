@@ -25,7 +25,12 @@ var svg = d3.select("body").append("svg")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
-
+// the data is an array of the parsed data from iris.tsv
+// in data.forEach(function(d)), the forEach function passes the index's
+// of the parsed array in order to the the function inside (function(d))
+// in the form of the argument to that function. d (convention in d3
+// refers to data). is an object/array and contains a single index
+// of the parsed data from the tsv/csv. 
 d3.tsv("../ML_Datasets/iris.tsv", function(error, data) {
     if (error) throw error;
 

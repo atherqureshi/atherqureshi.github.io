@@ -43,5 +43,8 @@ Example:
 
 function type(d){
     d.x = parseFloat(d.x);
-    d.y = parseFloat(d.y);
+    d.y = +d.y;
 }
+
+// d.x is now a number! and this will get passed to the third argument 
+// function(data)

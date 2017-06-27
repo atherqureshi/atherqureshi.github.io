@@ -1,0 +1,159 @@
+<html>
+
+<head>
+    <title> d3 help for Me </title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #F5F3EE;
+        }
+        
+        pre {
+            background-color: gray;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <h3 align="center"> Intro to D3 Library (beginner) </h3>
+    <ul>
+        <li> <a href="#methodChaining">Method Chaining </a></li>
+        <li> <a href="#parsingcsvs"> Parsing CSVs </a></li>
+        <li> <a href="#scales">D3 Scales </a></li>
+        <ul>
+            <li> <a href="#LinearScales"> Linear Scales </a></li>
+            <li> <a href="#ordinalScales"> Ordinal Scales </a></li>
+        </ul>
+
+        <h2 id="methodChaining"> Method Chaining </h2>
+
+        <pre><code>
+        var scale = d3.scale.linear();
+            .domain([0, 1])
+            .range([0, 100]);
+    </code></pre>
+
+        <p>
+            This is not a d3 thing, but it is used all the time in d3. This allows you to quickly set up the properties of an object you are creating In this case, we are setting up the domain and range of the d3 scale object all in a single line! The code below
+            is equivalent to the above code.
+        </p>
+
+        <pre><code>
+        var scale = d3.scale.linear();
+
+        scale.domain([0, 1]); 
+        scale.range([0, 100]); 
+    </code></pre>
+
+
+        <h2 id="parsingcsvs"> Parsing CSVs </h2>
+
+        d3.csv(string location of d3 file, function that does stuff with the data)
+        <br>
+        <pre><code>
+    d3.csv("data.csv", function (myArrayofObjects){
+        myArrayofObjects.forEach(function{d}{
+            console.log(d.x + d.y)
+        });
+    });
+    </code></pre>
+
+        <p>
+            The function creates an array and passes it into the second argument which is a function that is just the information in data.csv parsed. This functon then calls another function called forEach which just parses through all the data in the array one by
+            one. function(d) takes the values one by one from myArrayofObjects cause of the forEach function in the form of the argument, which is conventionally called d in d3 (standing for data).
+        </p>
+
+        You can also do this:
+
+        <pre><code>
+    d3.tsv("../ML_Datasets/iris.tsv", function(error, data) { 
+        if (error) throw error; 
+        data.forEach(function(d) { 
+            //convert string from tsv to number 
+            d.sepalLength = +d.sepalLength; 
+            d.sepalWidth = +d.sepalWidth; 
+        }); 
+    }); 
+    </code></pre>
+
+        <p>
+            In this case, error is a boolean flag. d3.tsv will put a 1 in this boolean flag if it runs into some error while parsing the tsv. This code uses that condition and will stop execution while throwing the error. also this:
+        </p>
+        <pre><code>    
+        d3.tsv("data.tsv", convertType, function(data)) 
+    </code></pre>
+
+        <p> The 2nd argument is a function that basically does the same thing as the 3rd argument, and you can typically just convert the strings in the csv file to numbers using the parseFloat method, or the + operator right before the object.
+        </p>
+
+        Example:
+
+        <pre><code>
+    function type(d){ 
+        d.x = parseFloat(d.x);
+         d.y = +d.y; 
+    } 
+    
+    // d.x is now a number! and this will get passed to the third argument
+    // function(data)
+    </code></pre>
+
+        <h2 id="scales"> Parsing Scales </h2>
+
+        <h3 id="LinearScales"> Linear Scales </h3>
+
+        <pre><code>
+        var scale = d3.scale.linear();
+
+        scale.domain([0, 1]); // DATA Space
+        scale.range([0, 100]); // PIXEL (Output) space
+
+        //to access
+        console.log(scale(0.5);
+
+        >50
+    </code></pre>
+
+        <p>
+            D3 has tons of these functions to help you map your data in visualizations. The Linear scale, maps the domain to the range given what you set in the poperties of it in the above function In this example, you can give the scale object a data point between
+            0 and 1, and it will map it to the range. In this case, if I give it 0.5, it will map to 50
+        </p>
+
+        <p>
+            Then, you can call the scale object and give it a input (in the domain) and d3 will MAP it appropriately to the output There are many different scales. Linear tries to do a 1to1 bijective function
+        </p>
+
+        <p>
+            You can also call scale.domain() and scale.range(), and it will return the arrays you set for it
+        </p>
+
+        <h3 id=ordinalScales> Ordinal Scales </h3>
+
+        <p> has to do with discrete values </p>
+
+        <pre><code> 
+        var scale = d3.scale.ordinal()
+            .domain(["A", "B", "C"])
+            .range("apple", "banana", "coconut");
+        </code></pre>
+
+        <p>
+            If you now pass in scale("A"), it will return apple. If you do B and C, it will return banana and coconut. It is 1 to 1. If you add more items to the range then domain, then the items larger than the domain will never be able to be accessed
+        </p>
+
+        <pre><code> 
+        var scale = d3.scale.ordinal()
+            .domain(["A", "B", "C"])
+            .rangePoints([0,100]); //OR USE .rangeRoundPoints()
+    
+        </code></pre>
+
+        <p>
+            This maps the input stings to discrete numbers in the pixel space You can use rangeRoundPoints if you want to round to whole numbers You will get blurred lines if you use a text like 3.33333
+        </p>
+</body>
+
+
+
+</html>
