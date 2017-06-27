@@ -17,6 +17,9 @@
 
 <body>
     <h3 align="center"> Intro to D3 Library (beginner) </h3>
+
+    <p align="center"> D3 is just a DOM manipulation library. It contains various helpful functions for you to edit svg images
+    </p>
     <ul>
         <li> <a href="#methodChaining">Method Chaining </a></li>
         <li> <a href="#parsingcsvs"> Parsing CSVs </a></li>
@@ -25,6 +28,7 @@
             <li> <a href="#LinearScales"> Linear Scales </a></li>
             <li> <a href="#ordinalScales"> Ordinal Scales </a></li>
         </ul>
+        <li> <a href="#SVGCreation"> Creating SVG Objects with D3 </a></li>
 
         <h2 id="methodChaining"> Method Chaining </h2>
 
@@ -146,12 +150,40 @@
         var scale = d3.scale.ordinal()
             .domain(["A", "B", "C"])
             .rangePoints([0,100]); //OR USE .rangeRoundPoints()
-    
         </code></pre>
 
         <p>
             This maps the input stings to discrete numbers in the pixel space You can use rangeRoundPoints if you want to round to whole numbers You will get blurred lines if you use a text like 3.33333
         </p>
+
+        <h2 id="SVGCreation"> Creating SVG Objects </h2>
+
+        <p> You can create SVG Objects directly in the HTML by using &ltsvg>, and placing various shapes in there like &ltrect>, &ltcircle> .... You can edit their sizes using the width, height attributes. But you can also do this directly in Javascript as
+            well. You can also use method chaining to do this faster
+
+            <pre><code> 
+            &ltsvg width = "250" height= "250">
+                &ltrect x = "50" y="20" height="20">&lt/rect>
+            &lt/svg>
+        </code></pre>
+
+            <p> Versus </p>
+
+            <pre><code> 
+            var svg = d3.select("body").append("svg");
+            svg.attr("width", 250);
+            svg.attr("height", 250);
+
+            var rect = svg.append ("rect");
+
+            rect.attr("x", 50);
+            rect.attr("y", 50);
+            rect.attr("width", 20);
+            rect.attr("height", 20);
+            </code></pre>
+
+            <p> Select takes a CSS string, and you can append tags to it using .append </p>
+
 </body>
 
 
