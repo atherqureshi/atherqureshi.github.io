@@ -29,6 +29,8 @@
             <li> <a href="#ordinalScales"> Ordinal Scales </a></li>
         </ul>
         <li> <a href="#SVGCreation"> Creating SVG Objects with D3 </a></li>
+        <li> <a href="#SolidExample"> Solid Example </a></li>
+
 
         <h2 id="methodChaining"> Method Chaining </h2>
 
@@ -64,8 +66,10 @@
     </code></pre>
 
         <p>
-            The function creates an array and passes it into the second argument which is a function that is just the information in data.csv parsed. This functon then calls another function called forEach which just parses through all the data in the array one by
-            one. function(d) takes the values one by one from myArrayofObjects cause of the forEach function in the form of the argument, which is conventionally called d in d3 (standing for data).
+            The function creates an array and passes it into the second argument which is a function that is just the information in data.csv parsed. This functon then calls another function on the array called forEach which just parses through all the data in the
+            array one by one. function(d) takes the values one by one from myArrayofObjects cause of the forEach function in the form of the argument, which is conventionally called d in d3 (standing for data). In terms of application, this piece of code
+            just outputs the additions of every instance (row in csv) of x and y columns in the original csv. We arbitrary called the array in the second argument as a parameter to be myArrayofObjects , but you can call it anything. The d3.csv function
+            makes this array by parsing through the csv file you enteted in argument 1.
         </p>
 
         You can also do this:
@@ -88,15 +92,16 @@
         d3.tsv("data.tsv", convertType, function(data)) 
     </code></pre>
 
-        <p> The 2nd argument is a function that basically does the same thing as the 3rd argument, and you can typically just convert the strings in the csv file to numbers using the parseFloat method, or the + operator right before the object.
+        <p> The 2nd argument is a function that basically does the same thing as what was in the forEach function in the last example, and you can typically just convert the strings in the csv file to numbers using the parseFloat method, or the + operator
+            right before the object.
         </p>
 
         Example:
 
         <pre><code>
-    function type(d){ 
+    function convertType(d){ 
         d.x = parseFloat(d.x);
-         d.y = +d.y; 
+        d.y = +d.y; 
     } 
     
     // d.x is now a number! and this will get passed to the third argument
@@ -183,6 +188,151 @@
             </code></pre>
 
             <p> Select takes a CSS string, and you can append tags to it using .append </p>
+
+            <h2 id="SolidExample"> Solid Example </h2>
+
+            <p> This example will showcase a VERY typical case in D3, and will show the enter method
+            </p>
+
+            <pre><code> 
+            //Our sample data points
+            var dataArray = [1, 2, 3, 4, 5];
+
+            //mapping our data inputs (from one to 5) to the range (from 0 to 200)
+            // in a linear fashion
+            var scale = d3.scale.linear()
+                .domain([1, 5])   // Data space
+                .range([0, 200]); // Pixel space
+            
+            //simply creating a SVG Object (a place to hold SVG images)
+            var svg = d3.select("body").append("svg")
+                .attr("width",  250)
+                .attr("height", 250);
+            
+            //THE MEAT! Explained below
+            svg.selectAll("rect")
+                .data(dataArray)
+                .enter().append("rect")
+                .attr("x", function (d){ return scale(d); })
+                .attr("y", 50)
+                .attr("width",  20)
+                .attr("height", 20);
+            </code></pre>
+
+            <p> You can also split it up like this </p>
+
+            <pre><code>
+            var dataArray = [1, 2, 3, 4, 5];
+
+            var scale = d3.scale.linear()
+                .domain([1, 5])   // Data space
+                .range([0, 200]); // Pixel space
+            
+            //create a SVG element on the HTML page in the Body section,
+            //and make it 250 x 250 pixels
+            
+            var svg = d3.select("body").append("svg")
+                .attr("width",  250)
+                .attr("height", 250);
+            
+            //rects now points to the rectanges within the svg we created above
+            //there are 0 rectangles at the align-content-lg-start
+            // .data(data) takes our dataArray and makes it accessible to the svg,
+            // and set up for the enter() function
+
+            var rects = svg.selectAll("rect").data(dataArray);
+            
+            //.enter().append("rect") will create a new rect element for every data
+            // item. It will stop when we have as many data items as rectangles
+            // the scale function/object will operate on the value d, which is 
+            // what enter() changes on each data iteration. 
+            // The other attributes are contsant and will affect all rectangles 
+
+            rects.enter().append("rect")
+                .attr("x", scale)
+                .attr("y", 50)
+                .attr("width",  20)
+                .attr("height", 20);
+            </code></pre>
+
+            <p> now in this case, the updating of the data is happening with the enter function.
+                <br> <strong> ENTER DOES NOT UPDATE DATA!!!!! </strong> <br>
+            </p>
+
+            <pre><code>
+            function render(data, color){
+
+                // Bind data
+                var rects = svg.selectAll("rect").data(data);
+            
+                // Enter - create the dom elements that weren't there
+                //use enter for static properties
+                rects.enter().append("rect")
+                    .attr("y", 50)
+                    .attr("width",  20)
+                    .attr("height", 20);
+                
+                // Update - depends on the data and input, and will be called for every
+                // single data object, and set all the values
+                // saying to go through all RECTANGLE ELEMENTS
+                // The enter phase is to construct the basic framework
+                // if there are less data items than rectangles, then it will not iterate 
+                // through the non-binded rectangles and the exit function becomes important
+                rects 
+                    .attr("x", scale)
+                    .attr("fill", color);
+                }
+
+                // Exit - when there are less data items than DOM elements
+                // removes rectangles not bound to data elements exit()
+                // remove(), removes the element from svg 
+                rects.exit().remove();
+
+            render([1, 2, 2.5], "red");
+            render([1, 2, 3, 4, 5], "blue");
+            </code></pre>
+
+            <p> In this example, we will add circles in a scatterplot like form </p>
+
+            <pre><code>
+             var svg = d3.select("body").append("svg")
+                .attr("width",  250)
+                .attr("height", 250);
+
+            function render(data){
+                
+                // Bind data
+                var circles = svg.selectAll("circle").data(data);
+                
+                // Enter - STATIC INFORMATION
+                circles.enter().append("circle")
+                .attr("r", 10);
+
+                // Update, in this case, we don't need to use scale, 
+                // so we can directly just go d.x and d.y as well
+                circles
+                .attr("cx", function (d){ return d.x; })
+                .attr("cy", function (d){ return d.y; });
+
+                // Exit
+                circles.exit().remove();
+            }
+            var myArrayOfObjects = [
+                { x: 100, y: 100},
+                { x: 130, y: 120},
+                { x: 80 , y: 180},
+                { x: 180, y: 80 },
+                { x: 180, y: 40 }
+            ];
+
+            //later we can do this later in the csv function as well 
+            render(myArrayOfObjects);
+
+            </code></pre>
+
+            <p> I AM AT 1:01:57 in the d3 youtube video here: https://www.youtube.com/watch?v=8jvoTV54nXw
+            </p>
+
 
 </body>
 

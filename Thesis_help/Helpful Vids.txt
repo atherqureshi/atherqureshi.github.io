@@ -5,3 +5,6 @@ https://www.youtube.com/watch?v=L-Lsfu4ab74&feature=youtu.be
 
 Machine Learning with D3
 https://www.youtube.com/watch?v=-0Pe30Zz3a0
+
+decision tree analysis
+https://bl.ocks.org/ajschumacher/65eda1df2b0dd2cf616f
