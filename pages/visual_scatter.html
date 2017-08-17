@@ -4,6 +4,7 @@
 <head>
     <title> Visualization </title>
     <style src="../css/visual_scatterplot.css"></style>
+    <style src="../css/visual_tree.css"></style>
     <script src="//d3js.org/d3.v3.min.js"></script>
     <script src=https://code.jquery.com/jquery-3.2.1.min.js ""></script>
 </head>
@@ -15,8 +16,7 @@
 </header>
 
 <body>
-
-
+    Petal Width and height are indicated by the Width and Height of each point
     <script>
         //set margins for graph
         var margin = {
@@ -25,8 +25,8 @@
                 bottom: 30,
                 left: 40
             },
-            width = 960 - margin.left - margin.right,
-            height = 500 - margin.top - margin.bottom;
+            width = 1200 - margin.left - margin.right,
+            height = 700 - margin.top - margin.bottom;
 
         //map the values of the input to the output pixels
         var x = d3.scale.linear()
@@ -34,6 +34,13 @@
 
         var y = d3.scale.linear()
             .range([height, 0]);
+
+        //we also want to map the petal width and height 
+        var dotWidthScale = d3.scale.linear()
+            .range([5, 15]);
+
+        var dotHeightScale = d3.scale.linear()
+            .range([5, 15]);
 
         //the colors will be the default 10 in d3
         var color = d3.scale.category10();
@@ -67,6 +74,8 @@
                 //convert string from tsv to number
                 d.sepalLength = +d.sepalLength;
                 d.sepalWidth = +d.sepalWidth;
+                d.petalLength = +d.petalLength;
+                d.petalWidth = +d.petalWidth;
             });
 
             x.domain(d3.extent(data, function(d) {
@@ -74,6 +83,14 @@
             })).nice();
             y.domain(d3.extent(data, function(d) {
                 return d.sepalLength;
+            })).nice();
+
+            dotHeightScale.domain(d3.extent(data, function(d) {
+                return d.petalLength;
+            })).nice();
+
+            dotWidthScale.domain(d3.extent(data, function(d) {
+                return d.petalWidth;
             })).nice();
 
             //Generating the graph structure and axis
@@ -102,15 +119,21 @@
             //polluting the graph with data points from the data
             svg.selectAll(".dot")
                 .data(data)
-                .enter().append("circle")
+                .enter().append("rect")
                 //setting to dot class so we can later identify them in DOM
                 .attr("class", "dot")
-                .attr("r", 3.5)
+                //scaling the petal length and width to the height and width of the rect
+                .attr("width", function(d) {
+                    return dotWidthScale(d.petalWidth)
+                })
+                .attr("height", function(d) {
+                    return dotHeightScale(d.petalLength)
+                })
                 //transform the input values to pixels using the scale functions
-                .attr("cx", function(d) {
+                .attr("x", function(d) {
                     return x(d.sepalWidth);
                 })
-                .attr("cy", function(d) {
+                .attr("y", function(d) {
                     return y(d.sepalLength);
                 })
                 .style("fill", function(d) {
@@ -150,31 +173,46 @@
             function hover(d) {
                 d3.select(this)
                     .transition()
-                    .ease("elastic")
+                    .ease("bounce")
                     .delay(0)
                     .duration(2000)
-                    .attr('r', 10);
-                //get the original data of this dot
-                console.log('Width: ' + d.sepalWidth + ' Length: ' + d.sepalLength);
+                    .attr('width', 40)
+                    .attr('height', 40);
+                //get the original data of this dot RUN A FUNCTION WITH THIS
+                var selectedPointData = {
+                    sepalWidth: d.sepalWidth,
+                    sepalLength: d.sepalLength,
+                    petalLength: d.petalLength,
+                    petalWidth: d.petalWidth
+                };
+                //generateTree(selectedPointData);
+                console.log(selectedPointData);
             }
 
             //when hovering off a point, set the radius back to normal
             function hoverOut(d) {
                 d3.select(this)
                     .transition()
-                    .ease("elastic")
+                    .ease("bounce")
                     .delay(300)
                     .duration(2000)
-                    .attr('r', 3.5);
+                    .attr('width', function(d) {
+                        return dotWidthScale(d.petalWidth)
+                    })
+                    .attr('height', function(d) {
+                        return dotHeightScale(d.petalLength);
+                    });
             }
 
             //assign what to do on mouseover
             d3.selectAll('.dot')
                 .on('mouseover', hover)
                 .on('mouseout', hoverOut);
-
         })
+
+        //get decision tree into a function
     </script>
+
 </body>
 
 </html>
