@@ -4,6 +4,8 @@
 <head>
     <title> Visualization </title>
     <style src="../css/visual_scatterplot.css"></style>
+    <script src="//d3js.org/d3.v3.min.js"></script>
+    <script src=https://code.jquery.com/jquery-3.2.1.min.js ""></script>
 </head>
 
 <header>
@@ -13,7 +15,8 @@
 </header>
 
 <body>
-    <script src="//d3js.org/d3.v3.min.js"></script>
+
+
     <script>
         //set margins for graph
         var margin = {
@@ -142,28 +145,28 @@
 
     <script>
         //interactive section
+        $(document).ready(function() {
+                //when hovering on a point, set the radius to normal
+                function hover(d) {
+                    d3.select(this)
+                        .attr('r', 10);
+                    //get the original data of this dot
+                    console.log('Width: ' + d.sepalWidth + ' Length: ' + d.sepalLength);
+                }
 
-        //when hovering on a point, set the radius to normal
-        function hover(d) {
-            d3.select(this)
-                .attr('r', 10);
-            //get the original data of this dot
-            console.log('Width: ' + d.sepalWidth + ' Length: ' + d.sepalLength);
-        }
+                //when hovering off a point, set the radius back to normal
+                function hoverOut(d) {
+                    d3.select(this)
+                        .attr('r', 3.5);
+                }
 
-        //when hovering off a point, set the radius back to normal
-        function hoverOut(d) {
-            d3.select(this)
-                .attr('r', 3.5);
-        }
+                //assign what to do on mouseover
+                d3.selectAll('.dot')
+                    .on('mouseover', hover)
+                    .on('mouseout', hoverOut);
 
-        //assign what to do on mouseover
-        d3.selectAll('.dot')
-            .on('mouseover', hover)
-            .on('mouseout', hoverOut);
-
-
-        //make a svg element that shows the decision tree of how this happened
+            })
+            //make a svg element that shows the decision tree of how this happened
     </script>
 </body>
 
