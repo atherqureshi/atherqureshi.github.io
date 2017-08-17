@@ -31,20 +31,28 @@
     Decision Tree Viewier
     <p>
 
+        <!- This SVG object will contain the Tree !->
+        <svg class='treeSVG'>
+        </svg>
+
+        <!- This SVG Object will contain the Scatterplot tree !->
+        <svg class='plotSVG'>
+        </svg>
+
         <script>
             //http://bl.ocks.org/pprett/3813537
             //Given a JSON file descripting a tree, this code block makes an interactive tree
             jsonFileString = 'iris.json ';
 
             //SVG CONFIGUATION
-            var margin = {
+            var tree_margin = {
                     top: 20,
                     right: 120,
                     bottom: 0,
                     left: 180
                 },
-                width = 960 - margin.right - margin.left,
-                height = 480 - margin.top - margin.bottom;
+                width = 960 - tree_margin.right - tree_margin.left,
+                height = 480 - tree_margin.top - tree_margin.bottom;
 
             var i = 0,
                 duration = 750,
@@ -59,11 +67,11 @@
                 });
 
             var svg = d3.select("body").append("svg")
-                .attr("width", width + margin.right + margin.left)
-                .attr("height", height + margin.top + margin.bottom)
+                .attr("width", width + tree_margin.right + tree_margin.left)
+                .attr("height", height + tree_margin.top + tree_margin.bottom)
                 .attr("id", 'TreeSVG')
                 .append("g")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+                .attr("transform", "translate(" + tree_margin.left + "," + tree_margin.top + ")");
 
 
             //INPUT DATA INTO D3 OBJECT
@@ -223,4 +231,128 @@
             }
 
             //generate d3 scatter plot and show thresholds within the scatterplot
+            /**
+             * For the brave souls who get this far: You are the chosen ones,
+             * the valiant knights of programming who toil away, without rest,
+             * fixing our most awful code. To you, true saviors, kings of men,
+             * I say this: never gonna give you up, never gonna let you down,
+             * never gonna run around and desert you. Never gonna make you cry,
+             * never gonna say goodbye. Never gonna tell a lie and hurt you.
+             */
+
+            var margin = {
+                    top: 20,
+                    right: 20,
+                    bottom: 30,
+                    left: 40
+                },
+                width = 960 - margin.left - margin.right,
+                height = 500 - margin.top - margin.bottom;
+
+            var x = d3.scale.linear()
+                .range([0, width]);
+
+            var y = d3.scale.linear()
+                .range([height, 0]);
+
+            var color = d3.scale.category10();
+
+            var xAxis = d3.svg.axis()
+                .scale(x)
+                .orient("bottom");
+
+            var yAxis = d3.svg.axis()
+                .scale(y)
+                .orient("left");
+
+            //directly adding to the svg element
+            var svg = d3.select("body").append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+            // the data is an array of the parsed data from iris.tsv
+            // in data.forEach(function(d)), the forEach function passes the index's
+            // of the parsed array in order to the the function inside (function(d))
+            // in the form of the argument to that function. d (convention in d3
+            // refers to data). is an object/array and contains a single index
+            // of the parsed data from the tsv/csv. 
+            d3.tsv("iris.tsv", function(error, data) {
+                if (error) throw error;
+                data.forEach(function(d) {
+                    //convert string from tsv to number
+                    d.sepalLength = +d.sepalLength;
+                    d.sepalWidth = +d.sepalWidth;
+                });
+
+                x.domain(d3.extent(data, function(d) {
+                    return d.sepalWidth;
+                })).nice();
+                y.domain(d3.extent(data, function(d) {
+                    return d.sepalLength;
+                })).nice();
+
+                svg.append("g")
+                    .attr("class", "x axis")
+                    .attr("transform", "translate(0," + height + ")")
+                    .call(xAxis)
+                    .append("text")
+                    .attr("class", "label")
+                    .attr("x", width)
+                    .attr("y", -6)
+                    .style("text-anchor", "end")
+                    .text("Sepal Width (cm)");
+
+                svg.append("g")
+                    .attr("class", "y axis")
+                    .call(yAxis)
+                    .append("text")
+                    .attr("class", "label")
+                    .attr("transform", "rotate(-90)")
+                    .attr("y", 6)
+                    .attr("dy", ".71em")
+                    .style("text-anchor", "end")
+                    .text("Sepal Length (cm)")
+
+                svg.selectAll(".dot")
+                    .data(data)
+                    .enter().append("circle")
+                    .attr("class", "dot")
+                    .attr("r", 3.5)
+                    .attr("cx", function(d) {
+                        return x(d.sepalWidth);
+                    })
+                    .attr("cy", function(d) {
+                        return y(d.sepalLength);
+                    })
+                    .style("fill", function(d) {
+                        return color(d.species);
+                    });
+
+                var legend = svg.selectAll(".legend")
+                    .data(color.domain())
+                    .enter().append("g")
+                    .attr("class", "legend")
+                    .attr("transform", function(d, i) {
+                        return "translate(0," + i * 20 + ")";
+                    });
+
+                legend.append("rect")
+                    .attr("x", width - 18)
+                    .attr("width", 18)
+                    .attr("height", 18)
+                    .style("fill", color);
+
+                legend.append("text")
+                    .attr("x", width - 24)
+                    .attr("y", 9)
+                    .attr("dy", ".35em")
+                    .style("text-anchor", "end")
+                    .text(function(d) {
+                        return d;
+                    });
+
+            });
         </script>

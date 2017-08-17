@@ -1,0 +1,4 @@
+{"name": "petal width (cm) > 0.8", "children": [
+	{"name": "petal width (cm) > 1.75", "children": 
+		[{"name": "petal length (cm) > 4.85", "children": 
+			[{"name": "0 of setosa, 0 of versicolor, 43 of virginica"}, {"name": "sepal width (cm) > 3.1", "children": [{"name": "0 of setosa, 1 of versicolor, 0 of virginica"}, {"name": "0 of setosa, 0 of versicolor, 2 of virginica"}]}]}, {"name": "petal length (cm) > 4.95", "children": [{"name": "petal width (cm) > 1.55", "children": [{"name": "sepal length (cm) > 6.95", "children": [{"name": "0 of setosa, 0 of versicolor, 1 of virginica"}, {"name": "0 of setosa, 2 of versicolor, 0 of virginica"}]}, {"name": "0 of setosa, 0 of versicolor, 3 of virginica"}]}, {"name": "petal width (cm) > 1.65", "children": [{"name": "0 of setosa, 0 of versicolor, 1 of virginica"}, {"name": "0 of setosa, 47 of versicolor, 0 of virginica"}]}]}]}, {"name": "50 of setosa, 0 of versicolor, 0 of virginica"}]}
