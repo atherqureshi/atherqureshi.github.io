@@ -142,6 +142,7 @@
 
     <script>
         //interactive section
+
         //when hovering on a point, set the radius to normal
         function hover(d) {
             d3.select(this)
@@ -160,6 +161,9 @@
         d3.selectAll('.dot')
             .on('mouseover', hover)
             .on('mouseout', hoverOut);
+
+
+        //make a svg element that shows the decision tree of how this happened
     </script>
 </body>
 
