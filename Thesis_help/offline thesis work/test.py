@@ -28,24 +28,22 @@ def rules(clf, features, labels, node_index=0):
     node = {}
     if clf.tree_.children_left[node_index] == -1:  # indicates leaf
         count_labels = zip(clf.tree_.value[node_index, 0], labels)
-        #write to JSON object
         node['name'] = ', '.join(('{} of {}'.format(int(count), label)
                                   for count, label in count_labels))
     else:
         feature = features[clf.tree_.feature[node_index]]
-        #rounding the threshold value to 4 decimal places
-        threshold = str(round(clf.tree_.threshold[node_index],4))
-        #write the threshold and feature name to the JSON object
+        threshold = clf.tree_.threshold[node_index]
         node['name'] = '{} > {}'.format(feature, threshold)
-        #recusively run the right and left child, and put their info underneath current root in JSON
-        node['children'] = [rules(clf, features, labels, clf.tree_.children_right[node_index]),
-                            rules(clf, features, labels, clf.tree_.children_left[node_index])]
+        left_index = clf.tree_.children_left[node_index]
+        right_index = clf.tree_.children_right[node_index]
+        node['children'] = [rules(clf, features, labels, right_index),
+                            rules(clf, features, labels, left_index)]
     return node
 
 
 def generateJSON(data):
 	#create decisionTree object
-    clf = DecisionTreeClassifier(max_depth=10)
+    clf = DecisionTreeClassifier(max_depth=3)
     #run fit, which creates the decision based the data, and target attributes
     clf.fit(data.data, data.target)
     #run rules function to get JSON version of Decision tree from sklearn 

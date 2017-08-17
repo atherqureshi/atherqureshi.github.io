@@ -164,6 +164,8 @@
                 });
 
         });
+
+        //create Tree SVG, and have it manipulated later based on the datapoint I select dynamically
     </script>
 
     <script>
@@ -185,7 +187,8 @@
                     petalLength: d.petalLength,
                     petalWidth: d.petalWidth
                 };
-                //generateTree(selectedPointData);
+                //This function should make the decision tree for how we classified this datapoint
+                //changeTree(selectedPointData);
                 console.log(selectedPointData);
             }
 
