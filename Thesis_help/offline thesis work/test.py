@@ -30,9 +30,10 @@ def rules(clf, features, labels, node_index=0):
         count_labels = zip(clf.tree_.value[node_index, 0], labels)
         node['name'] = ', '.join(('{} of {}'.format(int(count), label)
                                   for count, label in count_labels))
-    else:
+    else: #non leaf / so parent
         feature = features[clf.tree_.feature[node_index]]
         threshold = clf.tree_.threshold[node_index]
+        threshold = str(round(threshold,2))
         node['name'] = '{} > {}'.format(feature, threshold)
         left_index = clf.tree_.children_left[node_index]
         right_index = clf.tree_.children_right[node_index]
