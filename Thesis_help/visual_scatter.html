@@ -10,13 +10,15 @@
 </head>
 
 <header>
-    <a href="visual.html"> Back </a>
+    <a href="../pages/visual.html"> Back </a>
     <br>
     <a href="../index.html"> Home </a>
 </header>
 
 <body>
-    Petal Width and height are indicated by the Width and Height of each point
+    <p>
+        Petal Width and height are indicated by the Width and Height of each point
+    </p>
     <script>
         //set margins for graph
         var margin = {
@@ -143,7 +145,7 @@
                         petalLength: d.petalLength,
                         petalWidth: d.petalWidth
                     };
-                    console.log(selectedPointData);
+                    //console.log(selectedPointData);
                     //change the decsion tree to match this point!
                     //changeTree(selectedPointData);
                 })
@@ -177,9 +179,58 @@
         });
 
         //TO_DO: create Tree SVG, and have it manipulated later based on the datapoint I select dynamically
-    </script>
+        //using the selectedPointData function
+        var treeSVG = d3.select('body').append('svg')
+            .attr("width", 1200)
+            .attr('height', 500)
+            .append('g')
+            .attr('transform', "translate(50,50)");
 
-    <script>
+        var tree = d3.layout.tree()
+            .size([650, 250]);
+
+        d3.json('iris.json', function(data) {
+            //make nodes from the JSON
+            var nodes = tree.nodes(data);
+            //source and target is now linked
+            var links = tree.links(nodes);
+
+            //add circle to each node
+            var node = treeSVG.selectAll(".node")
+                .data(nodes)
+                .enter()
+                .append('g')
+                .attr('class', 'node')
+                .attr('transform', function(d) {
+                    return 'translate(' + d.x + ', ' + d.y + ')';
+                });
+
+            node.append('circle')
+                .attr('r', 5)
+                .attr('fill', 'blue');
+
+            //add labels to each node
+            node.append('text')
+                .text(function(d) {
+                    return d.name;
+                });
+
+            var diagonal = d3.svg.diagonal()
+                .projection(function(d) {
+                    return [d.x, d.y]
+                });
+
+            //link the nodes
+            treeSVG.selectAll('.link')
+                .data(links)
+                .enter()
+                .append('path')
+                .attr('class', 'link')
+                .attr('fill', 'none')
+                .attr('stroke', 'gray')
+                .attr('d', diagonal);
+        });
+
         //interactive section
         $(document).ready(function() {
             //when hovering on a point, set the radius to normal
