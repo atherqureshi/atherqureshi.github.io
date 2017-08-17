@@ -136,6 +136,17 @@
                 .attr("y", function(d) {
                     return y(d.sepalLength);
                 })
+                .on('click', function(d) {
+                    var selectedPointData = {
+                        sepalWidth: d.sepalWidth,
+                        sepalLength: d.sepalLength,
+                        petalLength: d.petalLength,
+                        petalWidth: d.petalWidth
+                    };
+                    console.log(selectedPointData);
+                    //change the decsion tree to match this point!
+                    //changeTree(selectedPointData);
+                })
                 .style("fill", function(d) {
                     return color(d.species);
                 });
@@ -188,8 +199,9 @@
                     petalWidth: d.petalWidth
                 };
                 //This function should make the decision tree for how we classified this datapoint
+                //if person clicks while hovered
                 //changeTree(selectedPointData);
-                console.log(selectedPointData);
+                //console.log(selectedPointData);
             }
 
             //when hovering off a point, set the radius back to normal
