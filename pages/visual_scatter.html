@@ -73,6 +73,7 @@
                 return d.sepalLength;
             })).nice();
 
+            //Generating the graph structure and axis
             svg.append("g")
                 .attr("class", "x axis")
                 .attr("transform", "translate(0," + height + ")")
@@ -95,12 +96,14 @@
                 .style("text-anchor", "end")
                 .text("Sepal Length (cm)")
 
-            //all data points will have the dot class!
+            //polluting the graph with data points from the data
             svg.selectAll(".dot")
                 .data(data)
                 .enter().append("circle")
+                //setting to dot class so we can later identify them in DOM
                 .attr("class", "dot")
                 .attr("r", 3.5)
+                //transform the input values to pixels using the scale functions
                 .attr("cx", function(d) {
                     return x(d.sepalWidth);
                 })
@@ -135,23 +138,28 @@
                 });
 
         });
+    </script>
 
+    <script>
         //interactive section
-
+        //when hovering on a point, set the radius to normal
         function hover(d) {
             d3.select(this)
-                .attr('r', 40);
-            console.log("hovering");
+                .attr('r', 10);
+            //get the original data of this dot
+            console.log('Width: ' + d.sepalWidth + ' Length: ' + d.sepalLength);
         }
 
+        //when hovering off a point, set the radius back to normal
         function hoverOut(d) {
-            console.log("no longer hovering");
+            d3.select(this)
+                .attr('r', 3.5);
         }
 
         //assign what to do on mouseover
-        d3.selectAll('.dot').on('mouseover', function() {
-            console.log("test")
-        });
+        d3.selectAll('.dot')
+            .on('mouseover', hover)
+            .on('mouseout', hoverOut);
     </script>
 </body>
 
