@@ -1,13 +1,16 @@
+//set margins for graph
 var margin = { top: 20, right: 20, bottom: 30, left: 40 },
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
+//map the values of the input to the output pixels
 var x = d3.scale.linear()
     .range([0, width]);
 
 var y = d3.scale.linear()
     .range([height, 0]);
 
+//the colors will be the default 10 in d3
 var color = d3.scale.category10();
 
 var xAxis = d3.svg.axis()
@@ -18,7 +21,7 @@ var yAxis = d3.svg.axis()
     .scale(y)
     .orient("left");
 
-//directly adding to the svg element
+//directly appending to the svg element to the dom and giving correct attributes
 var svg = d3.select("body").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
@@ -66,6 +69,7 @@ d3.tsv("../ML_Datasets/iris.tsv", function(error, data) {
         .style("text-anchor", "end")
         .text("Sepal Length (cm)")
 
+    //all data points will have the dot class!
     svg.selectAll(".dot")
         .data(data)
         .enter().append("circle")
@@ -95,3 +99,19 @@ d3.tsv("../ML_Datasets/iris.tsv", function(error, data) {
         .text(function(d) { return d; });
 
 });
+
+console.log("hello");
+
+function hover(d) {
+    d3.select(this);
+    delay(0);
+    console.log("hovering");
+}
+
+function hoverOut(d) {
+    d3.select(this);
+    console.log("no longer hovering");
+}
+
+d3.selectAll(".dot")
+    .on('mouseover', hover);
