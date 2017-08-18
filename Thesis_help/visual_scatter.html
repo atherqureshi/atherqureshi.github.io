@@ -3,8 +3,11 @@
 
 <head>
     <title> Visualization </title>
+    <!-- Load the styling for the scatterplot and the tree !-->
     <style src="../css/visual_scatterplot.css"></style>
     <style src="../css/visual_tree.css"></style>
+
+    <!-- Load the D3 v3 library and jQuery !-->
     <script src="//d3js.org/d3.v3.min.js"></script>
     <script src=https://code.jquery.com/jquery-3.2.1.min.js ""></script>
 </head>
@@ -178,17 +181,33 @@
 
         });
 
+        //Function takes in the data from the tree, and updates the treeSVG to the data
+        function changeTree(pointData) {
+            //figure out the decision path where this pointData goes, and make a new JSON!
+            //then simply send this again to the update root function
+            var pointJSON = {};
+            $.getJSON('iris.json', function(data) {
+                console.log(data);
+                pointJSON = data;
+            });
+            console.log(pointJSON);
+        }
+
         //TO_DO: create Tree SVG, and have it manipulated later based on the datapoint I select dynamically
         //using the selectedPointData function
+
+        //Add the treeSVG element to the page
         var treeSVG = d3.select('body').append('svg')
             .attr('height', 500)
             .attr("width", 1200)
             .append('g')
             .attr('transform', "translate(250,50)");
 
+        //will be used to calculate the nodes and links from the data
         var tree = d3.layout.tree()
             .size([300, 600]);
 
+        //just a function that will draw a nice curve between two points, source and target. 
         var diagonal = d3.svg.diagonal()
             .projection(function(d) {
                 return [d.y, d.x];
@@ -198,6 +217,7 @@
             duration = 750,
             root;
 
+        //generates the tree givin a JSON file
         d3.json('iris.json', function(error, flare) {
             if (error) throw error;
 
@@ -227,7 +247,7 @@
 
             // Normalize for fixed-depth.
             nodes.forEach(function(d) {
-                d.y = d.depth * 160;
+                d.y = d.depth * 120;
             });
 
             // Update the nodes…
@@ -271,7 +291,7 @@
                 });
 
             nodeUpdate.select("circle")
-                .attr("r", 4.5)
+                .attr("r", 10)
                 .style("fill", function(d) {
                     return d._children ? "lightsteelblue" : "#fff";
                 });
@@ -363,17 +383,21 @@
                     .duration(2000)
                     .attr('width', 40)
                     .attr('height', 40);
-                //get the original data of this dot RUN A FUNCTION WITH THIS
+            }
+
+            //When user clicks on a point then it collects the input data for that point, and
+            //sends it to the tree to update the tree according to the point
+            function clickPoint(d) {
+                //get the original data of this dot
                 var selectedPointData = {
                     sepalWidth: d.sepalWidth,
                     sepalLength: d.sepalLength,
                     petalLength: d.petalLength,
                     petalWidth: d.petalWidth
                 };
-                //This function should make the decision tree for how we classified this datapoint
-                //if person clicks while hovered
-                //changeTree(selectedPointData);
                 //console.log(selectedPointData);
+                //This function should make the decision tree for how we classified this datapoint
+                changeTree(selectedPointData);
             }
 
             //when hovering off a point, set the radius back to normal
@@ -391,13 +415,13 @@
                     });
             }
 
-            //assign what to do on mouseover
+            //assign what to during interaction
             d3.selectAll('.dot')
                 .on('mouseover', hover)
-                .on('mouseout', hoverOut);
+                .on('mouseout', hoverOut)
+                .on('click', clickPoint);
         })
     </script>
-
 </body>
 
 </html>
