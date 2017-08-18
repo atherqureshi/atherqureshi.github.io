@@ -184,13 +184,10 @@
         //Function takes in the data from the tree, and updates the treeSVG to the data
         function changeTree(pointData) {
             //figure out the decision path where this pointData goes, and make a new JSON!
+            //this JSON will have new key value pairs that describe it's color, 
+            //blue colors indicate the path in the deiciion tree that a node takes. 
             //then simply send this again to the update root function
-            var pointJSON = {};
-            $.getJSON('iris.json', function(data) {
-                console.log(data);
-                pointJSON = data;
-            });
-            console.log(pointJSON);
+            var irisJSON =
         }
 
         //TO_DO: create Tree SVG, and have it manipulated later based on the datapoint I select dynamically
@@ -262,6 +259,7 @@
                 .attr("transform", function(d) {
                     return "translate(" + source.y0 + "," + source.x0 + ")";
                 })
+                //on click expand node
                 .on("click", click);
 
             nodeEnter.append("circle")
