@@ -20,7 +20,7 @@
 
 <body>
     <p>
-        Petal Width and height are indicated by the Width and Height of each point
+        Petal Width and height are indicated by the Width and Height of each point. Clicking on a point will color the nodes in the decision tree nodes that the decision tree took classifying them!
     </p>
     <script>
         //set margins for graph
@@ -325,6 +325,7 @@
                 .style("fill", function(d) {
                     return d._children ? "lightsteelblue" : "#fff";
                 })
+                //COLOR THE NODES BASED ON THE TYPE!!!!
                 .style("stroke", function(d) {
                     return d.type;
                 });
