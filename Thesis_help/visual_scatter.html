@@ -50,6 +50,7 @@
         //the colors will be the default 10 in d3
         var color = d3.scale.category10();
 
+        //create Axis using the scales!
         var xAxis = d3.svg.axis()
             .scale(x)
             .orient("bottom");
@@ -83,6 +84,8 @@
                 d.petalWidth = +d.petalWidth;
             });
 
+            //set the domains of the x and y, and the width/height to the 
+            //match the lower and upper bounds of the input data (using d3 extent)
             x.domain(d3.extent(data, function(d) {
                 return d.sepalWidth;
             })).nice();
@@ -98,7 +101,7 @@
                 return d.petalWidth;
             })).nice();
 
-            //Generating the graph structure and axis
+            //Appending the axis to the html
             svg.append("g")
                 .attr("class", "x axis")
                 .attr("transform", "translate(0," + height + ")")
@@ -121,7 +124,7 @@
                 .style("text-anchor", "end")
                 .text("Sepal Length (cm)")
 
-            //polluting the graph with data points from the data
+            //polluting the graph with data points from the data (data binding!)
             svg.selectAll(".dot")
                 .data(data)
                 .enter().append("rect")
@@ -156,6 +159,7 @@
                     return color(d.species);
                 });
 
+            //adding legend 
             var legend = svg.selectAll(".legend")
                 .data(color.domain())
                 .enter().append("g")
@@ -182,11 +186,33 @@
         });
 
         //TO-DOFunction takes in the data from the tree, and updates the treeSVG to the data
+        //RED node is the path a selected point takes, BLACK is default and it what it does not take
         function changeTree(pointData) {
-            //figure out the decision path where this pointData goes, and make a new JSON!
-            //this JSON will have new key value pairs that describe it's color, 
-            //blue colors indicate the path in the deiciion tree that a node takes. 
-            //then simply send this again to the update root function
+            var newJSON;
+            //edit the data based on the algorithm, then send that data to be visualized 
+            d3.json('iris.json', function(data) {
+                newJSON = data;
+                //set the root to be red (path taken through root is always red)
+                newJSON.type = "red";
+                //console.log(newJSON);
+                var compareValue = +(newJSON.name).split('>')[1];
+                console.log('petal length: ' + pointData.petalLength);
+                //if pointData's petalLength is greater than 2.45, go right to 0
+                if (pointData.petalLength > compareValue) {
+                    newJSON.children[0].type = "red";
+                    if (pointData.petalLength > +(newJSON.children[0].name).split('>')[1]) {
+                        newJSON.children[0].children[0].type = "red";
+                    } else {
+                        newJSON.children[0].children[1].type = "red";
+                    }
+
+                } else {
+                    //setosa, petal length was less than 2.45, we are done
+                    newJSON.children[1].type = "red";
+                }
+                console.log(newJSON);
+
+            })
         }
 
         //TO_DO: create Tree SVG, and have it manipulated later based on the datapoint I select dynamically
@@ -394,7 +420,7 @@
                 };
                 //console.log(selectedPointData);
                 //This function should make the decision tree for how we classified this datapoint
-                console.log(selectedPointData);
+                //console.log(selectedPointData);
                 changeTree(selectedPointData);
             }
 
