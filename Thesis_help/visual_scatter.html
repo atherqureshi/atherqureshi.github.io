@@ -241,7 +241,6 @@
                         d.children = null;
                     }
                 }
-
                 root.children.forEach(collapse);
                 update(root);
             });
@@ -325,6 +324,9 @@
                 .attr("r", 1e-6)
                 .style("fill", function(d) {
                     return d._children ? "lightsteelblue" : "#fff";
+                })
+                .style("stroke", function(d) {
+                    return d.type;
                 });
 
             nodeEnter.append("text")
