@@ -197,15 +197,29 @@
                 //console.log(newJSON);
                 var compareValue = +(newJSON.name).split('>')[1];
                 console.log('petal length: ' + pointData.petalLength);
+                console.log('petal width: ' + pointData.petalWidth);
                 //if pointData's petalLength is greater than 2.45, go right to 0
+                //petal length (cm) > 2.45
                 if (pointData.petalLength > compareValue) {
                     newJSON.children[0].type = "red";
-                    if (pointData.petalLength > +(newJSON.children[0].name).split('>')[1]) {
+                    //petal width (cm) > 1.75
+                    if (pointData.petalWidth > +(newJSON.children[0].name).split('>')[1]) {
                         newJSON.children[0].children[0].type = "red";
+                        //petal length (cm) > 4.85
+                        if (pointData.petalLength > +(newJSON.children[0].children[0].name).split('>')[1]) {
+                            newJSON.children[0].children[0].children[0].type = "red";
+                        } else {
+                            newJSON.children[0].children[0].children[1].type = "red";
+                        }
                     } else {
                         newJSON.children[0].children[1].type = "red";
+                        //petal length (cm) > 4.95
+                        if (pointData.petalLength > +(newJSON.children[0].children[1].name).split('>')[1]) {
+                            newJSON.children[0].children[1].children[0].type = "red";
+                        } else {
+                            newJSON.children[0].children[1].children[1].type = "red";
+                        }
                     }
-
                 } else {
                     //setosa, petal length was less than 2.45, we are done
                     newJSON.children[1].type = "red";
