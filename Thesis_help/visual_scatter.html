@@ -190,7 +190,9 @@
         function changeTree(pointData) {
             var newJSON;
             //edit the data based on the algorithm, then send that data to be visualized 
-            d3.json('iris.json', function(data) {
+            d3.json('iris.json', function(error, data) {
+                if (error) throw error;
+
                 newJSON = data;
                 //set the root to be red (path taken through root is always red)
                 newJSON.type = "red";
@@ -224,10 +226,27 @@
                     //setosa, petal length was less than 2.45, we are done
                     newJSON.children[1].type = "red";
                 }
+                //NEWJSON IS COORECTOOOO
                 console.log(newJSON);
 
-            })
+                root = newJSON;
+                root.x0 = height / 2;
+                root.y0 = 0;
+
+                //quick little helper function
+                function collapse(d) {
+                    if (d.children) {
+                        d._children = d.children;
+                        d._children.forEach(collapse);
+                        d.children = null;
+                    }
+                }
+
+                root.children.forEach(collapse);
+                update(root);
+            });
         }
+
 
         //TO_DO: create Tree SVG, and have it manipulated later based on the datapoint I select dynamically
         //using the selectedPointData function
@@ -257,6 +276,7 @@
         d3.json('iris.json', function(error, flare) {
             if (error) throw error;
 
+            console.log(flare);
             root = flare;
             root.x0 = height / 2;
             root.y0 = 0;
