@@ -22,6 +22,14 @@
     <p>
         Petal Width and height are indicated by the Width and Height of each point. Clicking on a point will color the nodes in the decision tree nodes that the decision tree took classifying them!
     </p>
+    Enter a new point below!
+    <form>
+        Petal length: <input type="number" step="0.01" min="1" max="6.9" name="pLength"></br>
+        Petal Width: <input type="number" step="0.01" min="0.1" max="2.5" name="pWidth"></br>
+        Sepal Length: <input type="number" step="0.01" min="4.3" max="7.9" name="sLength"></br>
+        Sepal Width: <input type="number" step="0.01" min="2" max "4.4"name="sWidth"></br>
+        <input type="submit" value="Submit">
+    </form>
     <script>
         //set margins for graph
         var margin = {
@@ -86,6 +94,18 @@
 
             //set the domains of the x and y, and the width/height to the 
             //match the lower and upper bounds of the input data (using d3 extent)
+            console.log("Sepal Width Domain: " + d3.extent(data, function(d) {
+                return d.sepalWidth;
+            }));
+            console.log("Sepal Length Domain: " + d3.extent(data, function(d) {
+                return d.sepalLength;
+            }));
+            console.log("Petal Width Domain: " + d3.extent(data, function(d) {
+                return d.petalWidth;
+            }));
+            console.log("Petal Length Domain: " + d3.extent(data, function(d) {
+                return d.petalLength;
+            }));
             x.domain(d3.extent(data, function(d) {
                 return d.sepalWidth;
             })).nice();
@@ -212,9 +232,6 @@
                     //setosa, petal length was less than 2.45, we are done
                     newJSON.children[1].type = "red";
                 }
-                //NEWJSON IS COORECTOOOO
-                //FOR DEBUGGING PURPOSES
-                //console.log(newJSON);
 
                 root = newJSON;
                 root.x0 = height / 2;
@@ -289,7 +306,7 @@
 
             // Normalize for fixed-depth.
             nodes.forEach(function(d) {
-                d.y = d.depth * 120;
+                d.y = d.depth * 140;
             });
 
             // Update the nodes…
@@ -312,14 +329,14 @@
                 .style("fill", function(d) {
                     return d._children ? "lightsteelblue" : "#fff";
                 })
-                //COLOR THE NODES BASED ON THE TYPE!!!!
+                //color the nodes based on the type!!!!
                 .style("stroke", function(d) {
                     return d.type;
                 });
 
             nodeEnter.append("text")
                 .attr("x", function(d) {
-                    return d.children || d._children ? -10 : 10;
+                    return d.children || d._children ? -20 : 20;
                 })
                 .attr("dy", ".35em")
                 .attr("text-anchor", function(d) {
