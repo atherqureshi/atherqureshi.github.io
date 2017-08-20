@@ -144,17 +144,6 @@
                 .attr("y", function(d) {
                     return y(d.sepalLength);
                 })
-                .on('click', function(d) {
-                    var selectedPointData = {
-                        sepalWidth: d.sepalWidth,
-                        sepalLength: d.sepalLength,
-                        petalLength: d.petalLength,
-                        petalWidth: d.petalWidth
-                    };
-                    //console.log(selectedPointData);
-                    //change the decsion tree to match this point!
-                    //changeTree(selectedPointData);
-                })
                 .style("fill", function(d) {
                     return color(d.species);
                 });
@@ -196,10 +185,7 @@
                 newJSON = data;
                 //set the root to be red (path taken through root is always red)
                 newJSON.type = "red";
-                //console.log(newJSON);
                 var compareValue = +(newJSON.name).split('>')[1];
-                console.log('petal length: ' + pointData.petalLength);
-                console.log('petal width: ' + pointData.petalWidth);
                 //if pointData's petalLength is greater than 2.45, go right to 0
                 //petal length (cm) > 2.45
                 if (pointData.petalLength > compareValue) {
@@ -247,9 +233,9 @@
             });
         }
 
-
-        //TO_DO: create Tree SVG, and have it manipulated later based on the datapoint I select dynamically
-        //using the selectedPointData function
+        //show case the point data
+        d3.select('body').append('p')
+            .attr('id', 'pointText');
 
         //Add the treeSVG element to the page
         var treeSVG = d3.select('body').append('svg')
@@ -454,8 +440,15 @@
                     sepalWidth: d.sepalWidth,
                     sepalLength: d.sepalLength,
                     petalLength: d.petalLength,
-                    petalWidth: d.petalWidth
+                    petalWidth: d.petalWidth,
+                    species: d.species
                 };
+                var pointDataString = "<b>Sepal Width (cm): </b>" + d.sepalWidth + "<br />" +
+                    "<b>Sepal Length(cm): </b>" + d.sepalLength + "<br />" +
+                    "<b>Petal Length(cm): </b>" + d.petalLength + "<br />" +
+                    "<b>Petal Width(cm): </b>" + d.petalWidth + "<br />" +
+                    "<b>Species: </b>" + d.species;
+                document.getElementById("pointText").innerHTML = pointDataString;
                 //console.log(selectedPointData);
                 //This function should make the decision tree for how we classified this datapoint
                 //console.log(selectedPointData);
