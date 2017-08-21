@@ -23,12 +23,12 @@
         Petal Width and height are indicated by the Width and Height of each point. Clicking on a point will color the nodes in the decision tree nodes that the decision tree took classifying them!
     </p>
     Enter a new point below!
-    <form id='newpointDataForm' method='get' accept-charset='utf-8'>
-        Petal length: <input type="number" step="0.01" min="1" max="6.9" name="pLength"></br>
-        Petal Width: <input type="number" step="0.01" min="0.1" max="2.5" name="pWidth"></br>
-        Sepal Length: <input type="number" step="0.01" min="4.3" max="7.9" name="sLength"></br>
-        Sepal Width: <input type="number" step="0.01" min="2" max "4.4"name="sWidth"></br>
-        <input type="submit" value="Submit" id='submitbtn'>
+    <form accept-charset='utf-8' onsubmit="onSubmitClicked()">
+        Petal length: <input type="number" step="0.01" min="1" max="6.9" name="pLength" id='pLength'></br>
+        Petal Width: <input type="number" step="0.01" min="0.1" max="2.5" name="pWidth" id='pWidth'></br>
+        Sepal Length: <input type="number" step="0.01" min="4.3" max="7.9" name="sLength" id='sLength'></br>
+        Sepal Width: <input type="number" step="0.01" min="2" max "4.4"name="sWidth" id='sWidth'></br>
+        <input type="submit" value="Submit">
     </form>
     <script>
         //set margins for graph
@@ -236,6 +236,7 @@
                         d.children = null;
                     }
                 }
+
                 root.children.forEach(collapse);
                 update(root);
             });
@@ -427,6 +428,17 @@
             update(d);
         }
 
+        function onSubmitClicked() {
+            var selectedPointData = {
+                sepalWidth: document.getElementById('sWidth').value,
+                sepalLength: document.getElementById('sLength').value,
+                petalLength: document.getElementById('pLength').value,
+                petalWidth: document.getElementById('pWidth').value,
+                species: 'N/A'
+            };
+            changeTree(selectedPointData);
+        }
+
         //interactive section
         $(document).ready(function() {
             //when hovering on a point, set the radius to normal
@@ -477,19 +489,6 @@
                 .on('mouseover', hover)
                 .on('mouseout', hoverOut)
                 .on('click', clickPoint);
-
-            $(function() {
-                $('submitbtn').click(function() {
-                    var selectedPointData = {
-                        sepalWidth: sWidth,
-                        sepalLength: sLength,
-                        petalLength: pLength,
-                        petalWidth: pWidth,
-                        species: "N/A"
-                    };
-                    changeTree(selectedPointData);
-                })
-            })
         })
     </script>
 </body>
