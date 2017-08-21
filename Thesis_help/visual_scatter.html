@@ -23,12 +23,12 @@
         Petal Width and height are indicated by the Width and Height of each point. Clicking on a point will color the nodes in the decision tree nodes that the decision tree took classifying them!
     </p>
     Enter a new point below!
-    <form>
+    <form id='newpointDataForm' method='get' accept-charset='utf-8'>
         Petal length: <input type="number" step="0.01" min="1" max="6.9" name="pLength"></br>
         Petal Width: <input type="number" step="0.01" min="0.1" max="2.5" name="pWidth"></br>
         Sepal Length: <input type="number" step="0.01" min="4.3" max="7.9" name="sLength"></br>
         Sepal Width: <input type="number" step="0.01" min="2" max "4.4"name="sWidth"></br>
-        <input type="submit" value="Submit">
+        <input type="submit" value="Submit" id='submitbtn'>
     </form>
     <script>
         //set margins for graph
@@ -91,21 +91,6 @@
                 d.petalLength = +d.petalLength;
                 d.petalWidth = +d.petalWidth;
             });
-
-            //set the domains of the x and y, and the width/height to the 
-            //match the lower and upper bounds of the input data (using d3 extent)
-            console.log("Sepal Width Domain: " + d3.extent(data, function(d) {
-                return d.sepalWidth;
-            }));
-            console.log("Sepal Length Domain: " + d3.extent(data, function(d) {
-                return d.sepalLength;
-            }));
-            console.log("Petal Width Domain: " + d3.extent(data, function(d) {
-                return d.petalWidth;
-            }));
-            console.log("Petal Length Domain: " + d3.extent(data, function(d) {
-                return d.petalLength;
-            }));
             x.domain(d3.extent(data, function(d) {
                 return d.sepalWidth;
             })).nice();
@@ -198,6 +183,12 @@
         //RED node is the path a selected point takes, BLACK is default and it what it does not take
         function changeTree(pointData) {
             var newJSON;
+            var pointDataString = "<b>Sepal Width (cm): </b>" + pointData.sepalWidth + "<br />" +
+                "<b>Sepal Length(cm): </b>" + pointData.sepalLength + "<br />" +
+                "<b>Petal Length(cm): </b>" + pointData.petalLength + "<br />" +
+                "<b>Petal Width(cm): </b>" + pointData.petalWidth + "<br />" +
+                "<b>Species: </b>" + pointData.species;
+            document.getElementById("pointText").innerHTML = pointDataString;
             //edit the data based on the algorithm, then send that data to be visualized 
             d3.json('iris.json', function(error, data) {
                 if (error) throw error;
@@ -460,12 +451,6 @@
                     petalWidth: d.petalWidth,
                     species: d.species
                 };
-                var pointDataString = "<b>Sepal Width (cm): </b>" + d.sepalWidth + "<br />" +
-                    "<b>Sepal Length(cm): </b>" + d.sepalLength + "<br />" +
-                    "<b>Petal Length(cm): </b>" + d.petalLength + "<br />" +
-                    "<b>Petal Width(cm): </b>" + d.petalWidth + "<br />" +
-                    "<b>Species: </b>" + d.species;
-                document.getElementById("pointText").innerHTML = pointDataString;
                 //console.log(selectedPointData);
                 //This function should make the decision tree for how we classified this datapoint
                 //console.log(selectedPointData);
@@ -492,6 +477,19 @@
                 .on('mouseover', hover)
                 .on('mouseout', hoverOut)
                 .on('click', clickPoint);
+
+            $(function() {
+                $('submitbtn').click(function() {
+                    var selectedPointData = {
+                        sepalWidth: sWidth,
+                        sepalLength: sLength,
+                        petalLength: pLength,
+                        petalWidth: pWidth,
+                        species: "N/A"
+                    };
+                    changeTree(selectedPointData);
+                })
+            })
         })
     </script>
 </body>
