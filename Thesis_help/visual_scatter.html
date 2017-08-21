@@ -14,6 +14,18 @@
         body {
             background-color: #DFE2DB
         }
+        
+        .button {
+            background-color: pink;
+            /* Green */
+            border: 1;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+        }
     </style>
 </head>
 
@@ -28,14 +40,14 @@
     <p>
         Petal Width and height are indicated by the Width and Height of each point. Clicking on a point will color the nodes in the decision tree nodes that the decision tree took classifying them!
     </p>
-    Enter a new point below!
-    <form accept-charset='utf-8' onsubmit="onSubmitClicked()">
-        Petal length: <input type="number" step="0.01" min="1" max="6.9" name="pLength" id='pLength'></br>
-        Petal Width: <input type="number" step="0.01" min="0.1" max="2.5" name="pWidth" id='pWidth'></br>
-        Sepal Length: <input type="number" step="0.01" min="4.3" max="7.9" name="sLength" id='sLength'></br>
-        Sepal Width: <input type="number" step="0.01" min="2" max "4.4"name="sWidth" id='sWidth'></br>
-        <input type="submit" value="Submit">
-    </form>
+    <br> Enter a new point below!
+    <br> Petal length:
+    <input type="number" step="0.01" min="1" max="6.9" name="pLength" id='pLength'></br>
+    Petal Width: <input type="number" step="0.01" min="0.1" max="2.5" name="pWidth" id='pWidth'></br>
+    Sepal Length: <input type="number" step="0.01" min="4.3" max="7.9" name="sLength" id='sLength'></br>
+    Sepal Width: <input type="number" step="0.01" min="2" max "4.4" name="sWidth" id='sWidth'></br>
+    <button class='button' onclick="onSubmitClicked()" value="Submit"> Submit </button>
+
     <script>
         //show case the point data
         d3.select('body').append('p')
@@ -225,13 +237,14 @@
 
         function onSubmitClicked() {
             var selectedPointData = {
-                sepalWidth: document.getElementById('sWidth').value,
-                sepalLength: document.getElementById('sLength').value,
-                petalLength: document.getElementById('pLength').value,
-                petalWidth: document.getElementById('pWidth').value,
+                sepalWidth: +document.getElementById('sWidth').value,
+                sepalLength: +document.getElementById('sLength').value,
+                petalLength: +document.getElementById('pLength').value,
+                petalWidth: +document.getElementById('pWidth').value,
                 species: 'N/A'
             };
             changeTree(selectedPointData);
+            return false;
         }
         //set margins for graph
         var margin = {
@@ -385,19 +398,18 @@
         //RED node is the path a selected point takes, BLACK is default and it what it does not take
         function changeTree(pointData) {
             var newJSON;
-            var pointDataString = "<b>Sepal Width (cm): </b>" + pointData.sepalWidth + "<br />" +
-                "<b>Sepal Length(cm): </b>" + pointData.sepalLength + "<br />" +
-                "<b>Petal Length(cm): </b>" + pointData.petalLength + "<br />" +
-                "<b>Petal Width(cm): </b>" + pointData.petalWidth + "<br />" +
-                "<b>Species: </b>" + pointData.species;
-            document.getElementById("pointText").innerHTML = pointDataString;
+            if (pointData.sepalWidth == 0 || pointData.sepalLength == 0 || pointData.petalLength == 0 || pointData.petalWidth == 0) {
+                document.getElementById('pointText').innerHTML = "You have entered incorrect values";
+                return;
+            }
             //edit the data based on the algorithm, then send that data to be visualized 
             d3.json('iris.json', function(error, data) {
                 if (error) throw error;
-
+                //copy the JSON over to a new variable
                 newJSON = data;
                 //set the root to be red (path taken through root is always red)
                 newJSON.type = "red";
+                //get value to compare from in the JSON
                 var compareValue = +(newJSON.name).split('>')[1];
                 //if pointData's petalLength is greater than 2.45, go right to 0
                 //petal length (cm) > 2.45
@@ -409,22 +421,35 @@
                         //petal length (cm) > 4.85
                         if (pointData.petalLength > +(newJSON.children[0].children[0].name).split('>')[1]) {
                             newJSON.children[0].children[0].children[0].type = "red";
+                            pointData.species = "virginica";
                         } else {
                             newJSON.children[0].children[0].children[1].type = "red";
+                            pointData.species = "2-1 for Virginica vs versicolor";
                         }
                     } else {
                         newJSON.children[0].children[1].type = "red";
                         //petal length (cm) > 4.95
                         if (pointData.petalLength > +(newJSON.children[0].children[1].name).split('>')[1]) {
                             newJSON.children[0].children[1].children[0].type = "red";
+                            pointData.species = "4-2 Virginica vs Versicolor";
                         } else {
                             newJSON.children[0].children[1].children[1].type = "red";
+                            pointData.species = "47-1 for Versicolor vs Virginica";
                         }
                     }
                 } else {
                     //setosa, petal length was less than 2.45, we are done
                     newJSON.children[1].type = "red";
+                    pointData.species = "setosa";
                 }
+
+                //show point information to user
+                var pointDataString = "<b>Sepal Width (cm): </b>" + pointData.sepalWidth + "<br />" +
+                    "<b>Sepal Length(cm): </b>" + pointData.sepalLength + "<br />" +
+                    "<b>Petal Length(cm): </b>" + pointData.petalLength + "<br />" +
+                    "<b>Petal Width(cm): </b>" + pointData.petalWidth + "<br />" +
+                    "<b>Species: </b>" + pointData.species;
+                document.getElementById("pointText").innerHTML = pointDataString;
 
                 root = newJSON;
                 root.x0 = height / 2;
@@ -470,9 +495,6 @@
                     petalWidth: d.petalWidth,
                     species: d.species
                 };
-                //console.log(selectedPointData);
-                //This function should make the decision tree for how we classified this datapoint
-                //console.log(selectedPointData);
                 changeTree(selectedPointData);
             }
 
