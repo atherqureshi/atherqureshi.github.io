@@ -69,11 +69,21 @@ BreastCancer_data = load_breast_cancer()
 #useful function to write our data to csv to visualize in d3
 def writeTOCSV(data):
     array = numpy.asarray(data.data)
+    #array = numpy.insert(array, 0, data.target)
     numpy.savetxt("foo.csv", array, delimiter = ",")
     return
-
-
+    
 #writeTOCSV(BreastCancer_data)
+#print BreastCancer_data.target
+
+#strings = ["%.0f" % number for number in BreastCancer_data.target]
+#string = ''
+#
+#for value in strings:
+#    string += value + ", \n"
+
+#print string
+
 
 #add name key to dictionarys to describe dataset for readability in the JSON when we try to output in d3
 Iris_data['name'] = 'Iris'
