@@ -2,8 +2,8 @@
 #values are in csv
 #(values, feature Names, TargetEnumerator, TargetEnumeratorNames)
 from sklearn.datasets import load_iris
-from sklearn.datasets import load_linnerud
 from sklearn.datasets import load_breast_cancer
+import
 
 #machine learning framework from python
 from sklearn.tree import DecisionTreeClassifier
@@ -47,7 +47,7 @@ def rules(clf, features, labels, node_index=0):
 
 def generateJSON(data):
 	#create decisionTree object
-    clf = DecisionTreeClassifier(max_depth=3)
+    clf = DecisionTreeClassifier(max_depth=5)
     #run fit, which creates the decision tree based the data
     clf.fit(data.data, data.target)
     #run rules function to get JSON version of Decision tree from sklearn 
@@ -62,7 +62,6 @@ def generateJSON(data):
 #load the data sets
 Iris_data = load_iris()
 BreastCancer_data = load_breast_cancer()
-print BreastCancer_data
 
 #add name key to dictionarys to describe dataset for readability in the JSON when we try to output in d3
 Iris_data['name'] = 'Iris'
