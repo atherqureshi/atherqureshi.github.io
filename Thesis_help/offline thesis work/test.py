@@ -3,6 +3,7 @@
 #(values, feature Names, TargetEnumerator, TargetEnumeratorNames)
 from sklearn.datasets import load_iris
 from sklearn.datasets import load_linnerud
+from sklearn.datasets import load_breast_cancer
 
 #machine learning framework from python
 from sklearn.tree import DecisionTreeClassifier
@@ -47,28 +48,29 @@ def rules(clf, features, labels, node_index=0):
 def generateJSON(data):
 	#create decisionTree object
     clf = DecisionTreeClassifier(max_depth=3)
-    #run fit, which creates the decision based the data, and target attributes
+    #run fit, which creates the decision tree based the data
     clf.fit(data.data, data.target)
     #run rules function to get JSON version of Decision tree from sklearn 
     JSONString = rules(clf, data.feature_names, data.target_names)
     #write JSON File with appropriate name to disk
     json.dump(JSONString, open(data.name +'.json', 'wb'))
-    #Debugging Purposes
+    #IU Purposes
     print("generated " + data.name)
     return
 
 
 #load the data sets
 Iris_data = load_iris()
-linnerud_data = load_linnerud()
+BreastCancer_data = load_breast_cancer()
+print BreastCancer_data
 
 #add name key to dictionarys to describe dataset for readability in the JSON when we try to output in d3
 Iris_data['name'] = 'Iris'
-linnerud_data['name'] = 'linnnerud'
+BreastCancer_data['name'] = 'Breast_Cancer'
 
 #Decision Trees
 generateJSON(Iris_data) #Decision Tree is fine (Decision Tree since descrete Set of Values as target)
-generateJSON(linnerud_data)
+generateJSON(BreastCancer_data)
 
 
 
