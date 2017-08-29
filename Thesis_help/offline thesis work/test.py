@@ -3,7 +3,9 @@
 #(values, feature Names, TargetEnumerator, TargetEnumeratorNames)
 from sklearn.datasets import load_iris
 from sklearn.datasets import load_breast_cancer
-import
+
+#we want csv versions of these datasets to easily visualize in d3
+import numpy
 
 #machine learning framework from python
 from sklearn.tree import DecisionTreeClassifier
@@ -35,6 +37,7 @@ def rules(clf, features, labels, node_index=0):
     else: #non leaf / so parent
         feature = features[clf.tree_.feature[node_index]]
         threshold = clf.tree_.threshold[node_index]
+        #round values to 2 decimal places
         threshold = str(round(threshold,2))
         node['name'] = '{} > {}'.format(feature, threshold)
         node['type'] = "black"
@@ -62,6 +65,15 @@ def generateJSON(data):
 #load the data sets
 Iris_data = load_iris()
 BreastCancer_data = load_breast_cancer()
+
+#useful function to write our data to csv to visualize in d3
+def writeTOCSV(data):
+    array = numpy.asarray(data.data)
+    numpy.savetxt("foo.csv", array, delimiter = ",")
+    return
+
+
+#writeTOCSV(BreastCancer_data)
 
 #add name key to dictionarys to describe dataset for readability in the JSON when we try to output in d3
 Iris_data['name'] = 'Iris'
