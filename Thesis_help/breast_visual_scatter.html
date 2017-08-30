@@ -233,7 +233,32 @@
             height = 700 - margin.top - margin.bottom;
 
         //array of all patient information
-        var dataMatrix = [];
+        var dataMatrix;
+        //to generate JSON from CSV
+        //http://techslides.com/demos/convert-csv-json.html
+        d3.json('breast_cancer_data.json', function(error, data) {
+            if (error) throw error;
+
+            dataMatrix = data;
+            console.log(dataMatrix[0]);
+        });
+
+        //var csv is the CSV file with headers
+        function csvJSON(csv) {
+            var lines = csv.split("\n");
+            var result = [];
+            var headers = lines[0].split(",");
+            for (var i = 1; i < lines.length; i++) {
+                var obj = {};
+                var currentline = lines[i].split(",");
+                for (var j = 0; j < headers.length; j++) {
+                    obj[headers[j]] = currentline[j];
+                }
+                result.push(obj);
+            }
+            //return result; //JavaScript object
+            return JSON.stringify(result); //JSON
+        }
 
         var tabulate = function(data, columns) {
             var table = d3.select('body').append('table')
@@ -280,8 +305,10 @@
         //parse through the csvs, to make JSON objects. 
         //these JSON objects will be referenced in the dataMatrix array via patient Number
         //If user then clicks on a field in the table, we will then get patient number
-        //and use that as an index to access the dataMatrix array. This array will then 
-        //call the changeTree function
+        //and use that as an index to access the dataMatrix array. We will then pass in
+        //the row's information from the dataMatrix[patient#] to the changeTree Function
+        //The change tree function will regenrate the tree based on the decisions used for that
+        //point
         d3.csv('breast_cancer.csv', function(data) {
             data.forEach(function(row) {
                 columnTitles = Object.keys(row);
