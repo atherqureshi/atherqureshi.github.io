@@ -240,7 +240,6 @@
             if (error) throw error;
 
             dataMatrix = data;
-            console.log(dataMatrix[0]);
         });
 
         //var csv is the CSV file with headers
@@ -295,9 +294,12 @@
                 })
                 //what do is a field is pressed
                 .on('click', function(d) {
-                    console.log('this field is pressed');
+                    var number = +d.value;
+                    //if the value is a integer, it is a patient number
+                    //this is garbage lazy code, but hey it works
+                    if (Number.isInteger(number))
+                        changeTree(number);
                 });
-
 
             return table;
         }
@@ -317,6 +319,35 @@
             var rowCount = columnTitles.length - 1;
             tabulate(data, columnTitles);
         })
+
+        //treeshould 
+        function changeTree(patientNumber) {
+            var newJSON;
+            var pointData = dataMatrix[patientNumber];
+            d3.json('breast_cancer.json', function(error, data) {
+                newJSON = data;
+                //change the root to red
+                newJSON.type = 'red';
+                var root = paint(newJSON)
+
+                function paint(node) {
+                    //it is a parent if it contains a '>' character
+                    if ((node.name).indexOf('>') > 0) {
+                        var compareValue = +(newJSON.name).split('>')[1];
+                        var fieldName = +(newJSON.name).split('>')[0];
+                        console.log(fieldName);
+                        return node.name;
+                    }
+                    //It is a leaf since it got no >
+                    else {
+                        return node.name;
+                    }
+                }
+
+
+            })
+
+        }
     </script>
 </body>
 
