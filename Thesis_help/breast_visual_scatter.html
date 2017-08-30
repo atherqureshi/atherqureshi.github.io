@@ -232,6 +232,9 @@
             width = 1200 - margin.left - margin.right,
             height = 700 - margin.top - margin.bottom;
 
+        //array of all patient information
+        var dataMatrix = [];
+
         var tabulate = function(data, columns) {
             var table = d3.select('body').append('table')
             var thead = table.append('thead')
@@ -244,7 +247,7 @@
                 .append('th')
                 .text(function(d) {
                     return d
-                })
+                });
 
             var rows = tbody.selectAll('tr')
                 .data(data)
@@ -265,6 +268,11 @@
                 .text(function(d) {
                     return d.value
                 })
+                //what do is a field is pressed
+                .on('click', function(d) {
+                    console.log('this field is pressed');
+                });
+
 
             return table;
         }
@@ -275,11 +283,6 @@
                 return;
             })
             var rowCount = columnTitles.length - 1;
-            //var columns = ['patient', 'benign or malignant', 'worst radius', 'worst texture', 'worst smoothness', 'worst concavity', 'mean texture'];
-            //worst radius, worst texture, worst smoothness, worst concavity, mean texture, 
-            //mean concave points, worst concave points, worst texture, mean concave points, 
-            //mean texture, worst area, worst smoothness, worst fractal dimension, area error,
-            // radius error, smoothness error, 
             tabulate(data, columnTitles);
         })
     </script>
