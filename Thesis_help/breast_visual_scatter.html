@@ -277,6 +277,11 @@
             return table;
         }
 
+        //parse through the csvs, to make JSON objects. 
+        //these JSON objects will be referenced in the dataMatrix array via patient Number
+        //If user then clicks on a field in the table, we will then get patient number
+        //and use that as an index to access the dataMatrix array. This array will then 
+        //call the changeTree function
         d3.csv('breast_cancer.csv', function(data) {
             data.forEach(function(row) {
                 columnTitles = Object.keys(row);
