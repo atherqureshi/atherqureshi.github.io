@@ -37,9 +37,16 @@
 
 <body>
     <h1 align='center'> Breast Cancer Decision Tree Visualizer </h1>
-    <p> This visualization will help indicate whether or not a selected patient's breast cancer is benign or malignant Given a large number of features 0 is malignant, and 1 is benign
+    <p> This visualization will help indicate whether or not a selected patient's breast cancer is benign or malignant given a large number of features.
+    </p>
+    <p>
+        Click on a patients ID number to see the decision tree for their classification
     </p>
     <script>
+        //show case the point data
+        d3.select('body').append('p')
+            .attr('id', 'pointText');
+
         //CODE FOR CREATING TREE
         //Add the treeSVG element to the page
         var treeSVG = d3.select('body').append('svg')
@@ -323,6 +330,7 @@
         //treeshould 
         function changeTree(patientNumber) {
             var newJSON;
+            document.getElementById('pointText').innerHTML = "You have selected Patient: " + patientNumber;
             var pointData = dataMatrix[patientNumber];
             d3.json('breast_cancer_tree.json', function(error, data) {
                 newJSON = data;
