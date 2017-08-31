@@ -63,7 +63,7 @@
             root;
 
         //generates the tree givin a JSON file
-        d3.json('Breast_Cancer.json', function(error, flare) {
+        d3.json('breast_cancer_tree.json', function(error, flare) {
             if (error) throw error;
 
             //console.log(flare);
@@ -324,29 +324,192 @@
         function changeTree(patientNumber) {
             var newJSON;
             var pointData = dataMatrix[patientNumber];
-            d3.json('breast_cancer.json', function(error, data) {
+            d3.json('breast_cancer_tree.json', function(error, data) {
                 newJSON = data;
-                //change the root to red
-                newJSON.type = 'red';
-                var root = paint(newJSON)
+                paint(newJSON);
+                root = newJSON;
+                root.x0 = height / 2;
+                root.y0 = 0;
+
+                //quick little helper function
+                function collapse(d) {
+                    if (d.children) {
+                        d._children = d.children;
+                        d._children.forEach(collapse);
+                        d.children = null;
+                    }
+                }
+
+                root.children.forEach(collapse);
+                update(root);
 
                 function paint(node) {
+                    //change the root to red
+                    node.type = 'red';
                     //it is a parent if it contains a '>' character
                     if ((node.name).indexOf('>') > 0) {
-                        var compareValue = +(newJSON.name).split('>')[1];
-                        var fieldName = +(newJSON.name).split('>')[0];
-                        console.log(fieldName);
-                        return node.name;
+                        //get the values at this node so we can compare
+                        var compareValue = +(node.name).split('>')[1];
+                        var fieldName = (node.name).split('>')[0];
+                        //remove leading space at the end of the field
+                        fieldName = fieldName.replace(/ +$/, "");
+
+                        //compare the pointData('fieldName') to what's in decision tree
+                        if (pointData[fieldName] > compareValue) {
+                            paint(node.children[0]);
+                        } else {
+                            paint(node.children[1]);
+                        }
                     }
                     //It is a leaf since it got no >
                     else {
-                        return node.name;
+                        return;
                     }
                 }
 
 
-            })
 
+            })
+        }
+
+        //function to simply redraw the interactive tree
+        //got from internet, modified it to draw stroke based on modified tree!
+        function update(source) {
+
+            // Compute the new tree layout.
+            var nodes = tree.nodes(root).reverse(),
+                links = tree.links(nodes);
+
+            // Normalize for fixed-depth.
+            nodes.forEach(function(d) {
+                d.y = d.depth * 140;
+            });
+
+            // Update the nodes…
+            var node = treeSVG.selectAll("g.node")
+                .data(nodes, function(d) {
+                    return d.id || (d.id = ++i);
+                });
+
+            // Enter any new nodes at the parent's previous position.
+            var nodeEnter = node.enter().append("g")
+                .attr("class", "node")
+                .attr("transform", function(d) {
+                    return "translate(" + source.y0 + "," + source.x0 + ")";
+                })
+                //on click expand node
+                .on("click", click);
+
+            nodeEnter.append("circle")
+                .attr("r", 1e-6)
+                .style("fill", function(d) {
+                    return d._children ? "lightsteelblue" : "#fff";
+                })
+                //color the nodes based on the type!!!!
+                .style("stroke", function(d) {
+                    return d.type;
+                });
+
+            nodeEnter.append("text")
+                .attr("x", function(d) {
+                    return d.children || d._children ? -20 : 20;
+                })
+                .attr("dy", ".35em")
+                .attr("text-anchor", function(d) {
+                    return d.children || d._children ? "end" : "start";
+                })
+                .text(function(d) {
+                    return d.name;
+                })
+                .style("fill-opacity", 1e-6);
+
+            // Transition nodes to their new position.
+            var nodeUpdate = node.transition()
+                .duration(duration)
+                .attr("transform", function(d) {
+                    return "translate(" + d.y + "," + d.x + ")";
+                });
+
+            nodeUpdate.select("circle")
+                .attr("r", 10)
+                .style("fill", function(d) {
+                    return d._children ? "lightsteelblue" : "#fff";
+                });
+
+            nodeUpdate.select("text")
+                .style("fill-opacity", 1);
+
+            // Transition exiting nodes to the parent's new position.
+            var nodeExit = node.exit().transition()
+                .duration(duration)
+                .attr("transform", function(d) {
+                    return "translate(" + source.y + "," + source.x + ")";
+                })
+                .remove();
+
+            nodeExit.select("circle")
+                .attr("r", 1e-6);
+
+            nodeExit.select("text")
+                .style("fill-opacity", 1e-6);
+
+            // Update the links…
+            var link = treeSVG.selectAll("path.link")
+                .data(links, function(d) {
+                    return d.target.id;
+                });
+
+            // Enter any new links at the parent's previous position.
+            link.enter().insert("path", "g")
+                .attr("class", "link")
+                .attr("d", function(d) {
+                    var o = {
+                        x: source.x0,
+                        y: source.y0
+                    };
+                    return diagonal({
+                        source: o,
+                        target: o
+                    });
+                });
+
+            // Transition links to their new position.
+            link.transition()
+                .duration(duration)
+                .attr("d", diagonal);
+
+            // Transition exiting nodes to the parent's new position.
+            link.exit().transition()
+                .duration(duration)
+                .attr("d", function(d) {
+                    var o = {
+                        x: source.x,
+                        y: source.y
+                    };
+                    return diagonal({
+                        source: o,
+                        target: o
+                    });
+                })
+                .remove();
+
+            // Stash the old positions for transition.
+            nodes.forEach(function(d) {
+                d.x0 = d.x;
+                d.y0 = d.y;
+            });
+        }
+
+        // Toggle children on click.
+        function click(d) {
+            if (d.children) {
+                d._children = d.children;
+                d.children = null;
+            } else {
+                d.children = d._children;
+                d._children = null;
+            }
+            update(d);
         }
     </script>
 </body>
