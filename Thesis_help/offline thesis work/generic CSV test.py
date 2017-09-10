@@ -10,6 +10,10 @@ from numpy import array
 import numpy
 import pandas
 
+#to create CSV from JSON
+import csv
+import json
+
 #machine learning framework from python
 from sklearn.tree import DecisionTreeClassifier
 
@@ -56,7 +60,6 @@ def generateJSON(data, depth):
     clf = DecisionTreeClassifier(max_depth=depth)
     #run fit, which creates the decision tree based the data
     clf.fit(data.data, data.target)
-    print data.data
     #run rules function to get JSON version of Decision tree from sklearn 
     JSONString = rules(clf, data.feature_names, data.target_names)
     #write JSON File with appropriate name to disk
@@ -76,7 +79,7 @@ def generateDictionaryFromCSV(csvFilePath):
 	dataFile = pandas.read_csv(input_file, header = 0, index_col=False, na_filter=False)
     #feature_names is now contains a list of all column values
 	feature_names = list(dataFile.columns.values)
-    #slice the last NAN item from list
+        #slice the last NAN item from list
         feature_names = feature_names[:-1]
         target_column = feature_names[1]
     #The 2nd column in the CSV is the target classifciations in numbers
@@ -105,7 +108,6 @@ def generateDictionaryFromCSV(csvFilePath):
         #remove the index and target columns from the data
         numpy_array = numpy.delete(numpy_array, 1, axis=1)
         numpy_array = numpy.delete(numpy_array, 0, axis=1)
-        print numpy_array
 
         #Generate the Deisicion Tree
         clf = DecisionTreeClassifier(max_depth=5)
@@ -114,10 +116,43 @@ def generateDictionaryFromCSV(csvFilePath):
         #run rules function to get JSON version of Decision tree from sklearn 
         JSONString = rules(clf, feature_names, target_names)
         #write JSON File with appropriate name to disk
-        json.dump(JSONString, open('CSVnew_tree.json', 'wb'))
+        newName = csvFilePath.replace(' ', '')[:-4]
+        json.dump(JSONString, open(newName + '_tree.json', 'wb'))
         return
 
+
+#create array of JSON objects to be accessed by front-end 
+def createJSONfromData(csvFilePath):
+
+    csvfile = open(csvFilePath, 'r')
+    justName = csvFilePath.replace(' ', '')[:-4]
+    jsonfile = open(justName +'_data.json', 'w')
+    dataFile = pandas.read_csv(csvFilePath, header = 0, index_col=False, na_filter=False)
+
+    #get feature names
+    fieldnames = list(dataFile.columns.values)
+    fieldnames = fieldnames[:-1]
+
+    reader = csv.DictReader(csvfile, fieldnames)
+    #skip the first row which are headers
+    reader.next()
+
+    #write out the file as an array of JS objects
+    
+    jsonfile.write('[')
+    firstLine = reader.next()
+    json.dump(firstLine, jsonfile)
+
+    for row in reader:
+        jsonfile.write(',')
+        json.dump(row, jsonfile)
+        jsonfile.write('\n')
+
+    jsonfile.write(']')
+    return
+
 generateDictionaryFromCSV('breast_cancer.csv')
+createJSONfromData('breast_cancer.csv')
 
 
 #load the data sets (a dictionary like object)
