@@ -4,6 +4,7 @@
 #(values, feature Names, TargetEnumerator, TargetEnumeratorNames)
 from sklearn.datasets import load_iris
 from sklearn.datasets import load_breast_cancer
+from numpy import array
 
 #we want csv versions of these datasets to easily visualize in d3
 import numpy
@@ -30,14 +31,12 @@ def rules(clf, features, labels, node_index=0):
         The names of the features and labels, respectively.
 
     """
-    depth = 0
     node = {}
     if clf.tree_.children_left[node_index] == -1:  # indicates leaf
         count_labels = zip(clf.tree_.value[node_index, 0], labels)
         node['name'] = ', '.join(('{} of {}'.format(int(count), label)
                                   for count, label in count_labels))
         node['type'] = "black"
-        depth++
     else: #non leaf / so parent
         feature = features[clf.tree_.feature[node_index]]
         threshold = clf.tree_.threshold[node_index]
@@ -57,12 +56,13 @@ def generateJSON(data, depth):
     clf = DecisionTreeClassifier(max_depth=depth)
     #run fit, which creates the decision tree based the data
     clf.fit(data.data, data.target)
+    print data.data
     #run rules function to get JSON version of Decision tree from sklearn 
-    JSONString = rules(clf, data.feature_names, data.target_names, depth)
+    JSONString = rules(clf, data.feature_names, data.target_names)
     #write JSON File with appropriate name to disk
     json.dump(JSONString, open(data.name +'_tree.json', 'wb'))
-    #IU Purposes
-    print("generated " + data.name)
+    #UI Purposes
+    print("generated " + data.name + ' tree in JSON Form')
     return
 
 #returns an object that can be used to create decision tree
@@ -73,9 +73,11 @@ def generateJSON(data, depth):
 #Format for CSV is: 1st Column is ID for row, 2nd Column is Target values, 3rd column on is features
 def generateDictionaryFromCSV(csvFilePath):
 	input_file = csvFilePath
-	dataFile = pandas.read_csv(input_file, header = 0)
+	dataFile = pandas.read_csv(input_file, header = 0, index_col=False, na_filter=False)
     #feature_names is now contains a list of all column values
 	feature_names = list(dataFile.columns.values)
+    #slice the last NAN item from list
+        feature_names = feature_names[:-1]
         target_column = feature_names[1]
     #The 2nd column in the CSV is the target classifciations in numbers
     #we will just call it by the by numbers for now
@@ -89,12 +91,20 @@ def generateDictionaryFromCSV(csvFilePath):
             if(num > max_num):
                 max_num = num
 
+        #generate target name list of numbers
         target_names = list(range(0, max_num+1))
+        #convert to the numbers to strings
+        target_names = list(map(str, target_names))
+        #convert the list to an ndarray to use in clf
+        target_names = array(target_names)
         
 
     #get rid of the Strings and turn into Numpy
 	dataFile = dataFile._get_numeric_data()
         numpy_array = dataFile.as_matrix()
+        #remove the index and target columns from the data
+        numpy_array = numpy.delete(numpy_array, 1, axis=1)
+        numpy_array = numpy.delete(numpy_array, 0, axis=1)
         print numpy_array
 
         #Generate the Deisicion Tree
@@ -104,13 +114,13 @@ def generateDictionaryFromCSV(csvFilePath):
         #run rules function to get JSON version of Decision tree from sklearn 
         JSONString = rules(clf, feature_names, target_names)
         #write JSON File with appropriate name to disk
-        json.dump(JSONString, open(data.name +'_tree.json', 'wb'))
+        json.dump(JSONString, open('CSVnew_tree.json', 'wb'))
         return
 
-#generateDictionaryFromCSV('breast_cancer.csv')
+generateDictionaryFromCSV('breast_cancer.csv')
 
 
-#load the data sets
+#load the data sets (a dictionary like object)
 Iris_data = load_iris()
 BreastCancer_data = load_breast_cancer()
 
