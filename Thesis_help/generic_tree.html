@@ -36,11 +36,11 @@
 </header>
 
 <body>
-    <h1 align='center'> Breast Cancer Decision Tree Visualizer </h1>
-    <p> This visualization will help indicate whether or not a selected patient's breast cancer is benign or malignant given a large number of features.
+    <h1 align='center'> Generic Decision Tree Visualizer </h1>
+    <p>
     </p>
     <p>
-        Click on a patients ID number to see the decision tree for their classification
+        Click on a ID number to see the decision tree for classification
     </p>
     <script>
         //show case the point data
@@ -244,7 +244,7 @@
 
         //read JSON file and source it in dataMatrix
         //http://techslides.com/demos/convert-csv-json.html
-        d3.json('breast_cancer_data2.json', function(error, data) {
+        d3.json('breast_cancer_data.json', function(error, data) {
             if (error) throw error;
             dataMatrix = data;
         });
@@ -311,10 +311,10 @@
         })
 
         //treeshould 
-        function changeTree(patientNumber) {
+        function changeTree(IDNumber) {
             var newJSON;
-            document.getElementById('pointText').innerHTML = "You have selected Patient: " + patientNumber;
-            var pointData = dataMatrix[patientNumber];
+            document.getElementById('pointText').innerHTML = "You have selected ID: " + IDNumber;
+            var pointData = dataMatrix[IDNumber];
             d3.json('breast_cancer_tree.json', function(error, data) {
                 newJSON = data;
                 paint(newJSON);
