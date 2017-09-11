@@ -21,6 +21,16 @@ from sklearn.tree import DecisionTreeClassifier
 import json
 import io
 
+#tools to edit HTML files
+from bs4 import BeautifulSoup
+
+#copy a file
+from shutil import copyfile
+import os
+
+#command line argument 
+import sys
+
 # this function creates json version of decisionTreeClassifier, that we able to 
 # visualize in d3 (FOUND ONLINE, and I made some slight modifications)
 def rules(clf, features, labels, node_index=0):
@@ -74,7 +84,7 @@ def generateJSON(data, depth):
 #data.data is a 2D array of NUMBERS [x][y] x is the row in csv, and y is the column
 #data.target is a 1D array of NUMBERS that is a simple number classifcation for each row [0 1 1 0]
 #Format for CSV is: 1st Column is ID for row, 2nd Column is Target values, 3rd column on is features
-def generateDictionaryFromCSV(csvFilePath):
+def createJSONTreefromData(csvFilePath):
 	input_file = csvFilePath
 	dataFile = pandas.read_csv(input_file, header = 0, index_col=False, na_filter=False)
     #feature_names is now contains a list of all column values
@@ -122,7 +132,7 @@ def generateDictionaryFromCSV(csvFilePath):
 
 
 #create array of JSON objects to be accessed by front-end 
-def createJSONfromData(csvFilePath):
+def createJSONofData(csvFilePath):
 
     csvfile = open(csvFilePath, 'r')
     justName = csvFilePath.replace(' ', '')[:-4]
@@ -151,21 +161,36 @@ def createJSONfromData(csvFilePath):
     jsonfile.write(']')
     return
 
-generateDictionaryFromCSV('breast_cancer.csv')
-createJSONfromData('breast_cancer.csv')
+#https://stackoverflow.com/questions/17126037/how-to-delete-only-the-content-of-file-in-python
+def deleteContent(fName):
+    with open(fName, "w"):
+        pass
+
+#MAIN
+CSVFile = sys.argv[1]
+
+#create JSON of tree from CSV
+createJSONTreefromData(CSVFile)
+#create JSON of the data, so easily access in javascript (dataMatrix)
+createJSONofData(CSVFile)
+#clear data in old custom.html file
+deleteContent('custom.html')
+#copy contents of template html to the new file
+copyfile('generic_tree.html', 'custom.html')
+#edit the custom.html to have the fileNames of both 
 
 
 #load the data sets (a dictionary like object)
-Iris_data = load_iris()
-BreastCancer_data = load_breast_cancer()
+#Iris_data = load_iris()
+#BreastCancer_data = load_breast_cancer()
 
 #add name key to dictionarys to describe dataset for readability in the JSON when we try to output in d3
-Iris_data['name'] = 'Iris'
-BreastCancer_data['name'] = 'Breast_Cancer'
+#Iris_data['name'] = 'Iris'
+#BreastCancer_data['name'] = 'Breast_Cancer'
 
 #Decision Trees
-generateJSON(Iris_data, 4) #Decision Tree is fine (Decision Tree since descrete Set of Values as target)
-generateJSON(BreastCancer_data, 5)
+#generateJSON(Iris_data, 4) #Decision Tree is fine (Decision Tree since descrete Set of Values as target)
+#generateJSON(BreastCancer_data, 5)
 
 
 

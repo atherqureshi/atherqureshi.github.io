@@ -1,0 +1,1 @@
+Create a bash script that will take in the csv as input, run the python scriptt to create the JSON tree and data, and then take the file names of these strings into the HTML generic_tree. Then, set up a local server here, then open up a chrome document to localhost:8000/generic_tree.html 
