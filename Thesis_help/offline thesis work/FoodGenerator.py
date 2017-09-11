@@ -64,19 +64,6 @@ def rules(clf, features, labels, node_index=0):
                             rules(clf, features, labels, left_index)]
     return node
 
-#parameter 1 is data object, Paramter is the depth of the tree
-def generateJSON(data, depth):
-	#create decisionTree object
-    clf = DecisionTreeClassifier(max_depth=depth)
-    #run fit, which creates the decision tree based the data
-    clf.fit(data.data, data.target)
-    #run rules function to get JSON version of Decision tree from sklearn 
-    JSONString = rules(clf, data.feature_names, data.target_names)
-    #write JSON File with appropriate name to disk
-    json.dump(JSONString, open(data.name +'_tree.json', 'wb'))
-    #UI Purposes
-    print("generated " + data.name + ' tree in JSON Form')
-    return
 
 #returns the FileName of the tree
 #data.feature_names = list of feature/column names
@@ -92,6 +79,12 @@ def createJSONTreefromData(csvFilePath):
         #slice the last NAN item from list
         feature_names = feature_names[:-1]
         target_column = feature_names[1]
+
+        #remove first 3 columns
+        feature_names.pop(0)
+        feature_names.pop(0)
+        feature_names.pop(0)
+
     #The 2nd column in the CSV is the target classifciations in numbers
     #we will just call it by the by numbers for now
     #later, user will enter this in client side, and will simply make the list here
@@ -123,8 +116,11 @@ def createJSONTreefromData(csvFilePath):
         clf = DecisionTreeClassifier(max_depth=5)
         #run fit, which creates the decision tree based the data
         clf.fit(numpy_array, target)
+        print numpy_array
         #run rules function to get JSON version of Decision tree from sklearn 
         JSONString = rules(clf, feature_names, target_names)
+        print 
+        print feature_names
         #write JSON File with appropriate name to disk
         newName = csvFilePath.replace(' ', '')[:-4]
         fileName = newName + '_tree.json'
@@ -194,17 +190,6 @@ with open("index.html", "wb") as file:
     file.write(html)
 
 
-#load the data sets (a dictionary like object)
-#Iris_data = load_iris()
-#BreastCancer_data = load_breast_cancer()
-
-#add name key to dictionarys to describe dataset for readability in the JSON when we try to output in d3
-#Iris_data['name'] = 'Iris'
-#BreastCancer_data['name'] = 'Breast_Cancer'
-
-#Decision Trees
-#generateJSON(Iris_data, 4) #Decision Tree is fine (Decision Tree since descrete Set of Values as target)
-#generateJSON(BreastCancer_data, 5)
 
 
 

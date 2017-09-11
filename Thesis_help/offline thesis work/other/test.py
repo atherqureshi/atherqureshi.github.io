@@ -55,6 +55,7 @@ def generateJSON(data):
     clf.fit(data.data, data.target)
     #run rules function to get JSON version of Decision tree from sklearn 
     JSONString = rules(clf, data.feature_names, data.target_names)
+    print data.feature_names
     #write JSON File with appropriate name to disk
     json.dump(JSONString, open(data.name +'_tree.json', 'wb'))
     #IU Purposes
