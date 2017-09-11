@@ -91,19 +91,12 @@ def createJSONTreefromData(csvFilePath):
         target = dataFile[target_column]
         target = target._get_numeric_data()
         target = target.as_matrix()
-    
-        max_num = 0
-        for num in target:
-            if(num > max_num):
-                max_num = num
-
-        #generate target name list of numbers
-        target_names = list(range(0, max_num+1))
-        #convert to the numbers to strings
-        target_names = list(map(str, target_names))
-        #convert the list to an ndarray to use in clf
-        target_names = array(target_names)
         
+        #set target_names equal to the values in the 3rd column
+        target_names = list(dataFile.target_names)
+        #remove all empty strings from the list
+        target_names = filter(bool, target_names) 
+        #target_names = array(target_names)
 
     #get rid of the Strings and turn into Numpy
 	dataFile = dataFile._get_numeric_data()
@@ -116,11 +109,9 @@ def createJSONTreefromData(csvFilePath):
         clf = DecisionTreeClassifier(max_depth=5)
         #run fit, which creates the decision tree based the data
         clf.fit(numpy_array, target)
-        print numpy_array
         #run rules function to get JSON version of Decision tree from sklearn 
         JSONString = rules(clf, feature_names, target_names)
         print 
-        print feature_names
         #write JSON File with appropriate name to disk
         newName = csvFilePath.replace(' ', '')[:-4]
         fileName = newName + '_tree.json'
