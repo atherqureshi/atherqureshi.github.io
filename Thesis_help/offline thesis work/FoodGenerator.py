@@ -78,7 +78,7 @@ def generateJSON(data, depth):
     print("generated " + data.name + ' tree in JSON Form')
     return
 
-#returns an object that can be used to create decision tree
+#returns the FileName of the tree
 #data.feature_names = list of feature/column names
 #data.target_names = list of classifications, somewhat like enumeration
 #data.data is a 2D array of NUMBERS [x][y] x is the row in csv, and y is the column
@@ -127,16 +127,19 @@ def createJSONTreefromData(csvFilePath):
         JSONString = rules(clf, feature_names, target_names)
         #write JSON File with appropriate name to disk
         newName = csvFilePath.replace(' ', '')[:-4]
-        json.dump(JSONString, open(newName + '_tree.json', 'wb'))
-        return
+        fileName = newName + '_tree.json'
+        json.dump(JSONString, open(fileName, 'wb'))
+        return fileName
 
 
 #create array of JSON objects to be accessed by front-end 
+#returns fileName (and Path, it's in working directory)
 def createJSONofData(csvFilePath):
 
     csvfile = open(csvFilePath, 'r')
     justName = csvFilePath.replace(' ', '')[:-4]
-    jsonfile = open(justName +'_data.json', 'w')
+    fileName = justName +'_data.json'
+    jsonfile = open(fileName, 'w')
     dataFile = pandas.read_csv(csvFilePath, header = 0, index_col=False, na_filter=False)
 
     #get feature names
@@ -159,7 +162,7 @@ def createJSONofData(csvFilePath):
         jsonfile.write('\n')
 
     jsonfile.write(']')
-    return
+    return fileName
 
 #https://stackoverflow.com/questions/17126037/how-to-delete-only-the-content-of-file-in-python
 def deleteContent(fName):
@@ -170,14 +173,17 @@ def deleteContent(fName):
 CSVFile = sys.argv[1]
 
 #create JSON of tree from CSV
-createJSONTreefromData(CSVFile)
+treeJSONName = createJSONTreefromData(CSVFile)
 #create JSON of the data, so easily access in javascript (dataMatrix)
-createJSONofData(CSVFile)
+dataJSONName = createJSONofData(CSVFile)
 #clear data in old custom.html file
 deleteContent('custom.html')
 #copy contents of template html to the new file
 copyfile('generic_tree.html', 'custom.html')
 #edit the custom.html to have the fileNames of both 
+htmlFile = BeautifulSoup('custom.html')
+jsVars = 'var decisionTreeJSONFile' + ' = ' + treeJSONName + ';\n' + 'var dataJSON' + ' = ' + dataJSONName + ';\n' + 'var dataCSVFile' + ' = ' + CSVFile + ';'
+htmlFIle.body.insert(JSVars, script)
 
 
 #load the data sets (a dictionary like object)
