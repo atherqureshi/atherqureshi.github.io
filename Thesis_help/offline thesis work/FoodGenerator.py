@@ -176,14 +176,22 @@ CSVFile = sys.argv[1]
 treeJSONName = createJSONTreefromData(CSVFile)
 #create JSON of the data, so easily access in javascript (dataMatrix)
 dataJSONName = createJSONofData(CSVFile)
-#clear data in old custom.html file
-deleteContent('custom.html')
+#clear data in old index.html file
+deleteContent('index.html')
 #copy contents of template html to the new file
-copyfile('generic_tree.html', 'custom.html')
-#edit the custom.html to have the fileNames of both 
-htmlFile = BeautifulSoup('custom.html')
-jsVars = 'var decisionTreeJSONFile' + ' = ' + treeJSONName + ';\n' + 'var dataJSON' + ' = ' + dataJSONName + ';\n' + 'var dataCSVFile' + ' = ' + CSVFile + ';'
-htmlFIle.body.insert(JSVars, script)
+copyfile('generic_tree.html', 'index.html')
+#edit the index.html to have the fileNames of both 
+with open("index.html") as fp:
+    soup = BeautifulSoup(fp, 'html.parser')
+
+
+JSVars = '\nvar decisionTreeJSONFile' + ' = "' + treeJSONName + '";\n' + 'var dataJSON' + ' = "' + dataJSONName + '";\n' + 'var dataCSVFile' + ' = "' + CSVFile + '";'
+tag = soup.new_tag('script')
+tag.string = JSVars
+soup.body.insert_before(tag)
+html = soup.prettify(soup.original_encoding)
+with open("index.html", "wb") as file:
+    file.write(html)
 
 
 #load the data sets (a dictionary like object)

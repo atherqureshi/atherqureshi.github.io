@@ -1,17 +1,21 @@
 <!DOCTYPE html>
 <html>
-
-<head>
-    <title> Breast Cancer Visualization </title>
-    <!-- Load the styling for the scatterplot and the tree !-->
-    <style src="../css/visual_scatterplot.css"></style>
-    <style src="../css/visual_tree.css"></style>
-
-    <!-- Load the D3 v3 library and jQuery !-->
-    <script src="//d3js.org/d3.v3.min.js"></script>
-    <script src=https://code.jquery.com/jquery-3.2.1.min.js ""></script>
-    <style>
-        body {
+ <head>
+  <title>
+   Breast Cancer Visualization
+  </title>
+  <!-- Load the styling for the scatterplot and the tree !-->
+  <style src="../css/visual_scatterplot.css">
+  </style>
+  <style src="../css/visual_tree.css">
+  </style>
+  <!-- Load the D3 v3 library and jQuery !-->
+  <script src="//d3js.org/d3.v3.min.js">
+  </script>
+  <script ""="" src="https://code.jquery.com/jquery-3.2.1.min.js">
+  </script>
+  <style>
+   body {
             background-color: #DFE2DB
         }
         
@@ -26,25 +30,33 @@
             display: inline-block;
             font-size: 16px;
         }
-    </style>
-</head>
-
-<header>
-    <a href="../pages/visual.html"> Back </a>
-    <br>
-    <a href="../index.html"> Home </a>
-</header>
-
-<body>
-    <h1 align='center'> Generic Decision Tree Visualizer </h1>
-    <p>
-    </p>
-    <p>
-        Click on a ID number to see the decision tree for classification
-    </p>
-    <script>
-
-        //the filepaths of theTree JSON, the Data in CSV and Data in JSON 
+  </style>
+ </head>
+ <header>
+  <a href="../pages/visual.html">
+   Back
+  </a>
+  <br/>
+  <a href="../index.html">
+   Home
+  </a>
+ </header>
+ <script>
+  var decisionTreeJSONFile = "breast_cancer_tree.json";
+var dataJSON = "breast_cancer_data.json";
+var dataCSVFile = "breast_cancer.csv";
+ </script>
+ <body>
+  <h1 align="center">
+   Generic Decision Tree Visualizer
+  </h1>
+  <p>
+  </p>
+  <p>
+   Click on a ID number to see the decision tree for classification
+  </p>
+  <script>
+   //the filepaths of theTree JSON, the Data in CSV and Data in JSON 
         //be added to to a copy of this document via a python script
         //IMPORTANT - This is a template document
         //decisionTreeJSONFile is the location of the decision tree in JSON format
@@ -510,7 +522,6 @@
             }
             update(d);
         }
-    </script>
-</body>
-
+  </script>
+ </body>
 </html>
