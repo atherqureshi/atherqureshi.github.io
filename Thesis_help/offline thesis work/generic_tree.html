@@ -318,11 +318,66 @@
             tabulate(data, columnTitles);
         })
 
-        //treeshould 
+        //function will change the tree if user presses a member ID 
         function changeTree(IDNumber) {
             var newJSON;
             document.getElementById('pointText').innerHTML = "You have selected ID: " + IDNumber;
             var pointData = dataMatrix[IDNumber];
+            console.log("If you use changeTree: format of object must look like: \n")
+            console.log(pointData);
+            d3.json('breast_cancer_tree.json', function(error, data) {
+                newJSON = data;
+                paint(newJSON);
+                root = newJSON;
+                root.x0 = height / 2;
+                root.y0 = 0;
+
+                //quick little helper function
+                function collapse(d) {
+                    if (d.children) {
+                        d._children = d.children;
+                        d._children.forEach(collapse);
+                        d.children = null;
+                    }
+                }
+
+                root.children.forEach(collapse);
+                update(root);
+
+                function paint(node) {
+                    //change the root to red
+                    node.type = 'red';
+                    //it is a parent if it contains a '>' character
+                    if ((node.name).indexOf('>') > 0) {
+                        //get the values at this node so we can compare
+                        var compareValue = +(node.name).split('>')[1];
+                        var fieldName = (node.name).split('>')[0];
+                        //remove leading space at the end of the field
+                        fieldName = fieldName.replace(/ +$/, "");
+
+                        //compare the pointData('fieldName') to what's in decision tree
+                        if (pointData[fieldName] > compareValue) {
+                            paint(node.children[0]);
+                        } else {
+                            paint(node.children[1]);
+                        }
+                    }
+                    //It is a leaf since it got no >
+                    else {
+                        return;
+                    }
+                }
+
+
+
+            })
+        }
+
+        //This function will be called if user uses developer tools and passes in a JSON file
+        function changeTree(JSObject) {
+            var newJSON;
+            document.getElementById('pointText').innerHTML = "You have entered in a new member info";
+            var pointData = JSObject;
             d3.json('breast_cancer_tree.json', function(error, data) {
                 newJSON = data;
                 paint(newJSON);
