@@ -520,6 +520,51 @@
                 .on('mouseout', hoverOut)
                 .on('click', clickPoint);
         })
+
+        function hover(d) {
+            d3.select(this)
+                .transition()
+                .ease("bounce")
+                .delay(0)
+                .duration(2000)
+                .attr('width', 40)
+                .attr('height', 40);
+        }
+
+        //When user clicks on a point then it collects the input data for that point, and
+        //sends it to the tree to update the tree according to the point
+        function clickPoint(d) {
+            //get the original data of this dot
+            var selectedPointData = {
+                sepalWidth: d.sepalWidth,
+                sepalLength: d.sepalLength,
+                petalLength: d.petalLength,
+                petalWidth: d.petalWidth,
+                species: d.species
+            };
+            changeTree(selectedPointData);
+        }
+
+        //when hovering off a point, set the radius back to normal
+        function hoverOut(d) {
+            d3.select(this)
+                .transition()
+                .ease("bounce")
+                .delay(300)
+                .duration(2000)
+                .attr('width', function(d) {
+                    return dotWidthScale(d.petalWidth)
+                })
+                .attr('height', function(d) {
+                    return dotHeightScale(d.petalLength);
+                });
+        }
+
+        //assign what to during interaction
+        d3.selectAll('.dot')
+            .on('mouseover', hover)
+            .on('mouseout', hoverOut)
+            .on('click', clickPoint);
     </script>
 </body>
 
