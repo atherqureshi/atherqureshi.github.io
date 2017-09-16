@@ -323,8 +323,9 @@
             var newJSON;
             document.getElementById('pointText').innerHTML = "You have selected ID: " + IDNumber;
             var pointData = dataMatrix[IDNumber];
-            console.log("If you use changeTree: format of object must look like: \n")
+            console.log("If you use changeTreeObject(): format of object must look like: ")
             console.log(pointData);
+            console.log('this function also returns a sample object that you can edit and pass in to ChangeTreeObject. To use simply type var yourVar = changeTree(anyIDNumber), then you can edit the yourVar JS object, and pass it into changeTreeObject() as a parameter');
             d3.json('breast_cancer_tree.json', function(error, data) {
                 newJSON = data;
                 paint(newJSON);
@@ -371,10 +372,12 @@
 
 
             })
+            return pointData;
         }
 
+
         //This function will be called if user uses developer tools and passes in a JSON file
-        function changeTree(JSObject) {
+        function changeTreeObject(JSObject) {
             var newJSON;
             document.getElementById('pointText').innerHTML = "You have entered in a new member info";
             var pointData = JSObject;
