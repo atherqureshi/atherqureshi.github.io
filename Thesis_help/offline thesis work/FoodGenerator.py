@@ -1,4 +1,4 @@
-
+    
 #importing practice datasets from Sklearn! 
 #values are in csv
 #(values, feature Names, TargetEnumerator, TargetEnumeratorNames)
@@ -77,7 +77,7 @@ def createJSONTreefromData(csvFilePath):
     #feature_names is now contains a list of all column values
 	feature_names = list(dataFile.columns.values)
         #slice the last NAN item from list
-        feature_names = feature_names[:-1]
+        #feature_names = feature_names[:-1]
         target_column = feature_names[1]
 
         #remove first 3 columns
@@ -111,7 +111,6 @@ def createJSONTreefromData(csvFilePath):
         clf.fit(numpy_array, target)
         #run rules function to get JSON version of Decision tree from sklearn 
         JSONString = rules(clf, feature_names, target_names)
-        print 
         #write JSON File with appropriate name to disk
         newName = csvFilePath.replace(' ', '')[:-4]
         fileName = newName + '_tree.json'

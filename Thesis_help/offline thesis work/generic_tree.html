@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title> Breast Cancer Visualization </title>
+    <title> Generic Visualization </title>
     <!-- Load the styling for the scatterplot and the tree !-->
     <style src="../css/visual_scatterplot.css"></style>
     <style src="../css/visual_tree.css"></style>
@@ -326,7 +326,7 @@
             console.log("If you use changeTreeObject(): format of object must look like: ")
             console.log(pointData);
             console.log('this function also returns a sample object that you can edit and pass in to ChangeTreeObject. To use simply type var yourVar = changeTree(anyIDNumber), then you can edit the yourVar JS object, and pass it into changeTreeObject() as a parameter');
-            d3.json('breast_cancer_tree.json', function(error, data) {
+            d3.json(dataJSON, function(error, data) {
                 newJSON = data;
                 paint(newJSON);
                 root = newJSON;
