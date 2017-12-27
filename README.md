@@ -1,3 +1,3 @@
 ## Welcome to my Website
 
-atherqureshi.github.io
+visit atherqureshi.github.io to view website 
