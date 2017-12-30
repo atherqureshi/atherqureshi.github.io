@@ -1,0 +1,36 @@
+{
+    "name": "petal length (cm) > 2.45",
+    "type": "black",
+    "children": [{
+        "name": "petal width (cm) > 1.75",
+        "type": "black",
+        "children": [{
+            "name": "petal length (cm) > 4.85",
+            "type": "black",
+            "children": [{
+                    "name": "0 of setosa, 0 of versicolor, 43 of virginica",
+                    "type": "black"
+                },
+                {
+                    "name": "0 of setosa, 1 of versicolor, 2 of virginica",
+                    "type": "black"
+                }
+            ]
+        }, {
+            "name": "petal length (cm) > 4.95",
+            "type": "black",
+            "children": [{
+                    "name": "0 of setosa, 2 of versicolor, 4 of virginica",
+                    "type": "black"
+                },
+                {
+                    "name": "0 of setosa, 47 of versicolor, 1 of virginica",
+                    "type": "black"
+                }
+            ]
+        }]
+    }, {
+        "name": "50 of setosa, 0 of versicolor, 0 of virginica",
+        "type": "black"
+    }]
+}

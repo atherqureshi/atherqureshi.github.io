@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title> Iris Visualization </title>
+    <!-- Load the styling for the scatterplot and the tree !-->
+    <style src="../css/visual_scatterplot.css"></style>
+    <style src="../css/visual_tree.css"></style>
+
+    <!-- Load the D3 v3 library and jQuery !-->
+    <script src="//d3js.org/d3.v3.min.js"></script>
+    <script src=https://code.jquery.com/jquery-3.2.1.min.js ""></script>
+    <style>
+        body {
+            background-color: #DFE2DB
+        }
+        
+        .button {
+            background-color: pink;
+            /* Green */
+            border: 1;
+            color: black;
+            padding: 10px 15px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+        }
+    </style>
+</head>
+
+<header>
+    <a href="../pages/visual.html"> Back </a>
+    <br>
+    <a href="../index.html"> Home </a>
+</header>
+
+<body>
+    <h1 align='center'> Iris Decision Tree Visualizer </h1>
+    <p>
+        Petal Width and height are indicated by the Width and Height of each point. Clicking on a point will color the nodes in the decision tree nodes that the decision tree took classifying them!
+    </p>
+    <br> Enter a new point below!
+    <br> Petal length: <input type="number" step="0.01" min="1" max="6.9" name="pLength" id='pLength'>
+    <br>
+    Petal Width: <input type="number" step="0.01" min="0.1" max="2.5" name="pWidth" id='pWidth'>
+    <br>
+    Sepal Length: <input type="number" step="0.01" min="4.3" max="7.9" name="sLength" id='sLength'>
+    <br>
+    Sepal Width: <input type="number" step="0.01" min="2" max= "4.4" name="sWidth" id='sWidth'>
+    <br>
+    <button class='button' onclick="onSubmitClicked()" value="Submit"> Submit </button>
+
+    <script>
+        //show case the point data
+        d3.select('body').append('p')
+            .attr('id', 'pointText');
+
+        //Add the treeSVG element to the page
+        var treeSVG = d3.select('body').append('svg')
+            .attr('height', 350)
+            .attr("width", 1200)
+            .append('g')
+            .attr('transform', "translate(250,50)");
+
+        //will be used to calculate the nodes and links from the data
+        var tree = d3.layout.tree()
+            .size([300, 600]);
+
+        //just a function that will draw a nice curve between two points, source and target. 
+        var diagonal = d3.svg.diagonal()
+            .projection(function(d) {
+                return [d.y, d.x];
+            });
+
+        var i = 0,
+            duration = 750,
+            root;
+
+        //generates the tree givin a JSON file
+        d3.json('iris.json', function(error, flare) {
+            if (error) throw error;
+
+            //console.log(flare);
+            root = flare;
+            root.x0 = height / 2;
+            root.y0 = 0;
+
+            function collapse(d) {
+                if (d.children) {
+                    d._children = d.children;
+                    d._children.forEach(collapse);
+                    d.children = null;
+                }
+            }
+
+            root.children.forEach(collapse);
+            update(root);
+        });
+
+        d3.select(self.frameElement).style("height", "480px");
+
+        function update(source) {
+
+            // Compute the new tree layout.
+            var nodes = tree.nodes(root).reverse(),
+                links = tree.links(nodes);
+
+            // Normalize for fixed-depth.
+            nodes.forEach(function(d) {
+                d.y = d.depth * 140;
+            });
+
+            // Update the nodes…
+            var node = treeSVG.selectAll("g.node")
+                .data(nodes, function(d) {
+                    return d.id || (d.id = ++i);
+                });
+
+            // Enter any new nodes at the parent's previous position.
+            var nodeEnter = node.enter().append("g")
+                .attr("class", "node")
+                .attr("transform", function(d) {
+                    return "translate(" + source.y0 + "," + source.x0 + ")";
+                })
+                //on click expand node
+                .on("click", click);
+
+            nodeEnter.append("circle")
+                .attr("r", 1e-6)
+                .style("fill", function(d) {
+                    return d._children ? "lightsteelblue" : "#fff";
+                })
+                //color the nodes based on the type!!!!
+                .style("stroke", function(d) {
+                    return d.type;
+                });
+
+            nodeEnter.append("text")
+                .attr("x", function(d) {
+                    return d.children || d._children ? -20 : 20;
+                })
+                .attr("dy", ".35em")
+                .attr("text-anchor", function(d) {
+                    return d.children || d._children ? "end" : "start";
+                })
+                .text(function(d) {
+                    return d.name;
+                })
+                .style("fill-opacity", 1e-6);
+
+            // Transition nodes to their new position.
+            var nodeUpdate = node.transition()
+                .duration(duration)
+                .attr("transform", function(d) {
+                    return "translate(" + d.y + "," + d.x + ")";
+                });
+
+            nodeUpdate.select("circle")
+                .attr("r", 10)
+                .style("fill", function(d) {
+                    return d._children ? "lightsteelblue" : "#fff";
+                });
+
+            nodeUpdate.select("text")
+                .style("fill-opacity", 1);
+
+            // Transition exiting nodes to the parent's new position.
+            var nodeExit = node.exit().transition()
+                .duration(duration)
+                .attr("transform", function(d) {
+                    return "translate(" + source.y + "," + source.x + ")";
+                })
+                .remove();
+
+            nodeExit.select("circle")
+                .attr("r", 1e-6);
+
+            nodeExit.select("text")
+                .style("fill-opacity", 1e-6);
+
+            // Update the links…
+            var link = treeSVG.selectAll("path.link")
+                .data(links, function(d) {
+                    return d.target.id;
+                });
+
+            // Enter any new links at the parent's previous position.
+            link.enter().insert("path", "g")
+                .attr("class", "link")
+                .attr("d", function(d) {
+                    var o = {
+                        x: source.x0,
+                        y: source.y0
+                    };
+                    return diagonal({
+                        source: o,
+                        target: o
+                    });
+                });
+
+            // Transition links to their new position.
+            link.transition()
+                .duration(duration)
+                .attr("d", diagonal);
+
+            // Transition exiting nodes to the parent's new position.
+            link.exit().transition()
+                .duration(duration)
+                .attr("d", function(d) {
+                    var o = {
+                        x: source.x,
+                        y: source.y
+                    };
+                    return diagonal({
+                        source: o,
+                        target: o
+                    });
+                })
+                .remove();
+
+            // Stash the old positions for transition.
+            nodes.forEach(function(d) {
+                d.x0 = d.x;
+                d.y0 = d.y;
+            });
+        }
+
+        // Toggle children on click.
+        function click(d) {
+            if (d.children) {
+                d._children = d.children;
+                d.children = null;
+            } else {
+                d.children = d._children;
+                d._children = null;
+            }
+            update(d);
+        }
+
+        function onSubmitClicked() {
+            var selectedPointData = {
+                sepalWidth: +document.getElementById('sWidth').value,
+                sepalLength: +document.getElementById('sLength').value,
+                petalLength: +document.getElementById('pLength').value,
+                petalWidth: +document.getElementById('pWidth').value,
+                species: 'N/A'
+            };
+            changeTree(selectedPointData);
+            return false;
+        }
+        //set margins for graph
+        var margin = {
+                top: 20,
+                right: 20,
+                bottom: 30,
+                left: 40
+            },
+            width = 1200 - margin.left - margin.right,
+            height = 700 - margin.top - margin.bottom;
+
+        //map the values of the input to the output pixels
+        var x = d3.scale.linear()
+            .range([0, width]);
+
+        var y = d3.scale.linear()
+            .range([height, 0]);
+
+        //we also want to map the petal width and height 
+        var dotWidthScale = d3.scale.linear()
+            .range([5, 15]);
+
+        var dotHeightScale = d3.scale.linear()
+            .range([5, 15]);
+
+        //the colors will be the default 10 in d3
+        var color = d3.scale.category10();
+
+        //create Axis using the scales!
+        var xAxis = d3.svg.axis()
+            .scale(x)
+            .orient("bottom");
+
+        var yAxis = d3.svg.axis()
+            .scale(y)
+            .orient("left");
+
+        //directly appending to the svg element to the dom and giving correct attributes
+        var svg = d3.select("body").append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+        // the data is an array of the parsed data from iris.tsv
+        // in data.forEach(function(d)), the forEach function passes the index's
+        // of the parsed array in order to the the function inside (function(d))
+        // in the form of the argument to that function. d (convention in d3
+        // refers to data). is an object/array and contains a single index
+        // of the parsed data from the tsv/csv. 
+        d3.tsv("../ML_Datasets/iris.tsv", function(error, data) {
+            if (error) throw error;
+
+            data.forEach(function(d) {
+                //convert string from tsv to number
+                d.sepalLength = +d.sepalLength;
+                d.sepalWidth = +d.sepalWidth;
+                d.petalLength = +d.petalLength;
+                d.petalWidth = +d.petalWidth;
+            });
+            x.domain(d3.extent(data, function(d) {
+                return d.sepalWidth;
+            })).nice();
+            y.domain(d3.extent(data, function(d) {
+                return d.sepalLength;
+            })).nice();
+
+            dotHeightScale.domain(d3.extent(data, function(d) {
+                return d.petalLength;
+            })).nice();
+
+            dotWidthScale.domain(d3.extent(data, function(d) {
+                return d.petalWidth;
+            })).nice();
+
+            //Appending the axis to the html
+            svg.append("g")
+                .attr("class", "x axis")
+                .attr("transform", "translate(0," + height + ")")
+                .call(xAxis)
+                .append("text")
+                .attr("class", "label")
+                .attr("x", width)
+                .attr("y", -6)
+                .style("text-anchor", "end")
+                .text("Sepal Width (cm)");
+
+            svg.append("g")
+                .attr("class", "y axis")
+                .call(yAxis)
+                .append("text")
+                .attr("class", "label")
+                .attr("transform", "rotate(-90)")
+                .attr("y", 6)
+                .attr("dy", ".71em")
+                .style("text-anchor", "end")
+                .text("Sepal Length (cm)")
+
+            //polluting the graph with data points from the data (data binding!)
+            svg.selectAll(".dot")
+                .data(data)
+                .enter().append("rect")
+                //setting to dot class so we can later identify them in DOM
+                .attr("class", "dot")
+                //scaling the petal length and width to the height and width of the rect
+                .attr("width", function(d) {
+                    return dotWidthScale(d.petalWidth)
+                })
+                .attr("height", function(d) {
+                    return dotHeightScale(d.petalLength)
+                })
+                //transform the input values to pixels using the scale functions
+                .attr("x", function(d) {
+                    return x(d.sepalWidth);
+                })
+                .attr("y", function(d) {
+                    return y(d.sepalLength);
+                })
+                .style("fill", function(d) {
+                    return color(d.species);
+                });
+
+            //adding legend 
+            var legend = svg.selectAll(".legend")
+                .data(color.domain())
+                .enter().append("g")
+                .attr("class", "legend")
+                .attr("transform", function(d, i) {
+                    return "translate(0," + i * 20 + ")";
+                });
+
+            legend.append("rect")
+                .attr("x", width - 18)
+                .attr("width", 18)
+                .attr("height", 18)
+                .style("fill", color);
+
+            legend.append("text")
+                .attr("x", width - 24)
+                .attr("y", 9)
+                .attr("dy", ".35em")
+                .style("text-anchor", "end")
+                .text(function(d) {
+                    return d;
+                });
+
+        });
+
+        //TO-DOFunction takes in the data from the tree, and updates the treeSVG to the data
+        //RED node is the path a selected point takes, BLACK is default and it what it does not take
+        function changeTree(pointData) {
+            var newJSON;
+            if (pointData.sepalWidth == 0 || pointData.sepalLength == 0 || pointData.petalLength == 0 || pointData.petalWidth == 0) {
+                document.getElementById('pointText').innerHTML = "You have entered incorrect values";
+                return;
+            }
+            //edit the data based on the algorithm, then send that data to be visualized 
+            d3.json('iris.json', function(error, data) {
+                if (error) throw error;
+                //copy the JSON over to a new variable
+                newJSON = data;
+                console.log(newJSON);
+                //set the root to be red (path taken through root is always red)
+                newJSON.type = "red";
+                //get value to compare from in the JSON
+                var compareValue = +(newJSON.name).split('>')[1];
+                //if pointData's petalLength is greater than 2.45, go right to 0
+                //petal length (cm) > 2.45
+                if (pointData.petalLength > compareValue) {
+                    newJSON.children[0].type = "red";
+                    //petal width (cm) > 1.75
+                    if (pointData.petalWidth > +(newJSON.children[0].name).split('>')[1]) {
+                        newJSON.children[0].children[0].type = "red";
+                        //petal length (cm) > 4.85
+                        if (pointData.petalLength > +(newJSON.children[0].children[0].name).split('>')[1]) {
+                            newJSON.children[0].children[0].children[0].type = "red";
+                            pointData.species = "virginica";
+                        } else {
+                            newJSON.children[0].children[0].children[1].type = "red";
+                            pointData.species = "2-1 for Virginica vs versicolor";
+                        }
+                    } else {
+                        newJSON.children[0].children[1].type = "red";
+                        //petal length (cm) > 4.95
+                        if (pointData.petalLength > +(newJSON.children[0].children[1].name).split('>')[1]) {
+                            newJSON.children[0].children[1].children[0].type = "red";
+                            pointData.species = "4-2 Virginica vs Versicolor";
+                        } else {
+                            newJSON.children[0].children[1].children[1].type = "red";
+                            pointData.species = "47-1 for Versicolor vs Virginica";
+                        }
+                    }
+                } else {
+                    //setosa, petal length was less than 2.45, we are done
+                    newJSON.children[1].type = "red";
+                    pointData.species = "setosa";
+                }
+
+                //show point information to user
+                var pointDataString = "<b>Sepal Width (cm): </b>" + pointData.sepalWidth + "<br />" +
+                    "<b>Sepal Length(cm): </b>" + pointData.sepalLength + "<br />" +
+                    "<b>Petal Length(cm): </b>" + pointData.petalLength + "<br />" +
+                    "<b>Petal Width(cm): </b>" + pointData.petalWidth + "<br />" +
+                    "<b>Species: </b>" + pointData.species;
+                document.getElementById("pointText").innerHTML = pointDataString;
+
+                root = newJSON;
+                root.x0 = height / 2;
+                root.y0 = 0;
+
+                //quick little helper function
+                function collapse(d) {
+                    if (d.children) {
+                        d._children = d.children;
+                        d._children.forEach(collapse);
+                        d.children = null;
+                    }
+                }
+
+                root.children.forEach(collapse);
+                update(root);
+            });
+        }
+
+
+
+        //interactive section
+        $(document).ready(function() {
+            //when hovering on a point, set the radius to normal
+            function hover(d) {
+                d3.select(this)
+                    .transition()
+                    .ease("bounce")
+                    .delay(0)
+                    .duration(2000)
+                    .attr('width', 40)
+                    .attr('height', 40);
+            }
+
+            //When user clicks on a point then it collects the input data for that point, and
+            //sends it to the tree to update the tree according to the point
+            function clickPoint(d) {
+                //get the original data of this dot
+                var selectedPointData = {
+                    sepalWidth: d.sepalWidth,
+                    sepalLength: d.sepalLength,
+                    petalLength: d.petalLength,
+                    petalWidth: d.petalWidth,
+                    species: d.species
+                };
+                changeTree(selectedPointData);
+            }
+
+            //when hovering off a point, set the radius back to normal
+            function hoverOut(d) {
+                d3.select(this)
+                    .transition()
+                    .ease("bounce")
+                    .delay(300)
+                    .duration(2000)
+                    .attr('width', function(d) {
+                        return dotWidthScale(d.petalWidth)
+                    })
+                    .attr('height', function(d) {
+                        return dotHeightScale(d.petalLength);
+                    });
+            }
+
+            //assign what to during interaction
+            d3.selectAll('.dot')
+                .on('mouseover', hover)
+                .on('mouseout', hoverOut)
+                .on('click', clickPoint);
+        })
+
+        function hover(d) {
+            d3.select(this)
+                .transition()
+                .ease("bounce")
+                .delay(0)
+                .duration(2000)
+                .attr('width', 40)
+                .attr('height', 40);
+        }
+
+        //When user clicks on a point then it collects the input data for that point, and
+        //sends it to the tree to update the tree according to the point
+        function clickPoint(d) {
+            //get the original data of this dot
+            var selectedPointData = {
+                sepalWidth: d.sepalWidth,
+                sepalLength: d.sepalLength,
+                petalLength: d.petalLength,
+                petalWidth: d.petalWidth,
+                species: d.species
+            };
+            changeTree(selectedPointData);
+        }
+
+        //when hovering off a point, set the radius back to normal
+        function hoverOut(d) {
+            d3.select(this)
+                .transition()
+                .ease("bounce")
+                .delay(300)
+                .duration(2000)
+                .attr('width', function(d) {
+                    return dotWidthScale(d.petalWidth)
+                })
+                .attr('height', function(d) {
+                    return dotHeightScale(d.petalLength);
+                });
+        }
+
+        //assign what to during interaction
+        d3.selectAll('.dot')
+            .on('mouseover', hover)
+            .on('mouseout', hoverOut)
+            .on('click', clickPoint);
+    </script>
+</body>
+
+</html>
